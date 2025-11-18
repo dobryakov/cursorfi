@@ -7,7 +7,7 @@ import { fileWatcherService } from './services/file-watcher.service';
 import { tracingMiddleware } from './middleware/tracing';
 import { logger } from './utils/logger';
 
-const PORT = parseInt(process.env.CURSORFI_BACKEND_PORT || '3002', 10);
+const PORT = parseInt(process.env.CURSORFI_BACKEND_PORT || '4001', 10);
 
 const app = new Elysia()
   .use(tracingMiddleware) // T141: Request tracing middleware

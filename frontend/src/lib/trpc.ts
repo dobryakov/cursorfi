@@ -5,7 +5,7 @@ const getBaseUrl = () => {
   if (typeof window !== 'undefined') {
     return ''; // Browser: use relative URL
   }
-  return process.env.CURSORFI_BACKEND_URL || 'http://backend:3002';
+  return process.env.CURSORFI_BACKEND_URL || 'http://backend:4001';
 };
 
 export const trpc = createTRPCProxyClient<AppRouter>({

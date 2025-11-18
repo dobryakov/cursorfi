@@ -5,7 +5,7 @@
 
 set -e
 
-BACKEND_PORT=${CURSORFI_BACKEND_PORT:-3002}
+BACKEND_PORT=${CURSORFI_BACKEND_PORT:-4001}
 SCRIPT_DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 
 echo "Testing protocol handlers..."

@@ -1,6 +1,6 @@
 import { Elysia } from 'elysia';
 import { initTRPC } from '@trpc/server';
-import { elysiaTrpc } from '@elysiajs/trpc';
+import { trpc as elysiaTrpc } from '@elysiajs/trpc';
 import { fileRouter } from './file.router';
 import { projectRouter } from './project.router';
 import { pageRouter } from './page.router';

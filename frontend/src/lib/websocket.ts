@@ -6,7 +6,7 @@ const getWebSocketUrl = () => {
     const host = window.location.host;
     return `${protocol}//${host}/ws`;
   }
-  return process.env.CURSORFI_BACKEND_URL?.replace('http', 'ws') || 'ws://backend:3002/ws';
+  return process.env.CURSORFI_BACKEND_URL?.replace('http', 'ws') || 'ws://backend:4001/ws';
 };
 
 class WebSocketClient {

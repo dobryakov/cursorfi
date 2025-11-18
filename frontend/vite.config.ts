@@ -12,14 +12,14 @@ export default defineConfig({
   },
   server: {
     host: '0.0.0.0',
-    port: 3001,
+    port: 4000,
     proxy: {
       '/api': {
-        target: process.env.CURSORFI_BACKEND_URL || 'http://backend:3002',
+        target: process.env.CURSORFI_BACKEND_URL || 'http://backend:4001',
         changeOrigin: true,
       },
       '/ws': {
-        target: process.env.CURSORFI_BACKEND_URL || 'ws://backend:3002',
+        target: process.env.CURSORFI_BACKEND_URL || 'ws://backend:4001',
         ws: true,
         changeOrigin: true,
       },

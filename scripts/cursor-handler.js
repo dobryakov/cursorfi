@@ -4,7 +4,7 @@
  * T119, T122: Protocol handler for cursor:// protocol (Windows)
  * 
  * This script is registered as a protocol handler on Windows to handle cursor:// URLs.
- * It calls the backend API via Cursor IDE's port forwarding (localhost:3002).
+ * It calls the backend API via Cursor IDE's port forwarding (localhost:4001).
  * 
  * Usage:
  *   cursor://file/path/to/file.tsx:42
@@ -41,7 +41,7 @@ const line = pathMatch[2] ? parseInt(pathMatch[2], 10) : undefined;
 const column = pathMatch[3] ? parseInt(pathMatch[3], 10) : undefined;
 
 // Backend API endpoint (via Cursor IDE's port forwarding)
-const backendPort = process.env.CURSORFI_BACKEND_PORT || '3002';
+const backendPort = process.env.CURSORFI_BACKEND_PORT || '4001';
 const backendUrl = `http://localhost:${backendPort}/api/trpc/cursor.open`;
 
 // Prepare request payload

@@ -35,8 +35,8 @@ Edit `.env` with your configuration:
 CURSORFI_PROJECT_PATH=/path/to/your/project
 
 # Ports (non-standard ports)
-CURSORFI_FRONTEND_PORT=3001
-CURSORFI_BACKEND_PORT=3002
+CURSORFI_FRONTEND_PORT=4000
+CURSORFI_BACKEND_PORT=4001
 
 # Sync configuration
 CURSORFI_SYNC_DEBOUNCE_MS=400
@@ -49,7 +49,7 @@ CURSORFI_TRACE_ENABLED=true
 ### 2. Build and Start Services
 
 ```bash
-docker-compose up --build
+docker compose up --build
 ```
 
 This will:
@@ -62,7 +62,7 @@ This will:
 Open your browser and navigate to:
 
 ```
-http://your-remote-server:3001
+http://your-remote-server:4000
 ```
 
 The editor should load and automatically scan your project for components and pages.
@@ -87,21 +87,21 @@ All tests run in Docker containers:
 
 ```bash
 # Unit and integration tests
-docker-compose run --rm backend bun test
+docker compose run --rm backend bun test
 
 # E2E tests
-docker-compose run --rm test bun test
+docker compose run --rm test bun test
 ```
 
 ### Viewing Logs
 
 ```bash
 # All services
-docker-compose logs -f
+docker compose logs -f
 
 # Specific service
-docker-compose logs -f frontend
-docker-compose logs -f backend
+docker compose logs -f frontend
+docker compose logs -f backend
 ```
 
 ## Configuration
@@ -111,8 +111,8 @@ docker-compose logs -f backend
 | Variable | Description | Default |
 |----------|-------------|---------|
 | `CURSORFI_PROJECT_PATH` | Absolute path to project directory | Required |
-| `CURSORFI_FRONTEND_PORT` | Frontend web server port | `3001` |
-| `CURSORFI_BACKEND_PORT` | Backend API server port | `3002` |
+| `CURSORFI_FRONTEND_PORT` | Frontend web server port | `4000` |
+| `CURSORFI_BACKEND_PORT` | Backend API server port | `4001` |
 | `CURSORFI_SYNC_DEBOUNCE_MS` | Debounce delay for file writes | `400` |
 | `CURSORFI_FILE_WATCH_INTERVAL` | File watching poll interval | Auto |
 | `CURSORFI_LOG_LEVEL` | Logging level (info, warn, error) | `info` |
@@ -121,8 +121,8 @@ docker-compose logs -f backend
 ## Cursor IDE Integration
 
 Cursor IDE automatically forwards ports from the remote server to your local Windows machine:
-- Backend port `3002` → accessible as `localhost:3002` on Windows
-- Frontend port `3001` → accessible as `localhost:3001` on Windows
+- Backend port `4001` → accessible as `localhost:4001` on Windows
+- Frontend port `4000` → accessible as `localhost:4000` on Windows
 
 Protocol handlers (`cursor://` and `cursorfi://`) use the forwarded ports to communicate with the backend.
 
