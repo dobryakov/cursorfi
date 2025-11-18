@@ -296,6 +296,186 @@ This document provides an actionable, dependency-ordered task list for implement
 - [ ] T154 [P] Configure Playwright in test container with browsers in test/Dockerfile
 - [ ] T155 [P] Run all tests in containers and verify they pass
 
+## Phase 10: E2E Testing with Playwright
+
+**Goal**: Create comprehensive end-to-end test suite covering all main user workflows and interactions.
+
+**Independent Test Criteria**: All E2E tests pass in test container, tests cover core user journeys, tests are maintainable and reliable.
+
+### Test Infrastructure Setup
+
+- [ ] T156 [P] Create test package.json with Playwright, Bun, and test dependencies in test/package.json
+- [ ] T157 [P] Create Playwright configuration file (playwright.config.ts) with test container settings in test/playwright.config.ts
+- [ ] T158 [P] Create test utilities and helpers (page objects, selectors, fixtures) in test/utils/
+- [ ] T159 [P] Create test fixtures for common setup (login, page navigation, component library) in test/fixtures/
+- [ ] T160 [P] Create test data factories for generating test pages and components in test/factories/
+- [ ] T161 [P] Add test environment variables configuration in test/.env.example
+- [ ] T162 [P] Create test helper functions for waiting for sync operations in test/utils/sync-helpers.ts
+- [ ] T163 [P] Create test helper functions for canvas interactions (drag, drop, select) in test/utils/canvas-helpers.ts
+
+### Basic Page Loading and Rendering Tests
+
+- [ ] T164 [P] [E2E] Test: Editor page loads successfully and displays main layout in test/e2e/basic/page-loading.test.ts
+- [ ] T165 [P] [E2E] Test: Canvas renders with initial page content (index.tsx) in test/e2e/basic/canvas-rendering.test.ts
+- [ ] T166 [P] [E2E] Test: Component library sidebar is visible and displays component categories in test/e2e/basic/component-library.test.ts
+- [ ] T167 [P] [E2E] Test: Properties panel is visible and shows "Select an element" message when nothing selected in test/e2e/basic/properties-panel.test.ts
+- [ ] T168 [P] [E2E] Test: Loading state displays correctly during page initialization in test/e2e/basic/loading-states.test.ts
+- [ ] T169 [P] [E2E] Test: Error state displays correctly when page load fails in test/e2e/basic/error-states.test.ts
+- [ ] T170 [P] [E2E] Test: Empty state displays correctly for pages without content in test/e2e/basic/empty-states.test.ts
+
+### Component Library and Block Addition Tests
+
+- [ ] T171 [P] [E2E] Test: Component library search filters components correctly in test/e2e/components/library-search.test.ts
+- [ ] T172 [P] [E2E] Test: Component library category filtering works correctly in test/e2e/components/library-filter.test.ts
+- [ ] T173 [P] [E2E] Test: Drag Container block from library and drop onto canvas in test/e2e/components/add-blocks.test.ts
+- [ ] T174 [P] [E2E] Test: Drag Heading block from library and drop onto canvas in test/e2e/components/add-blocks.test.ts
+- [ ] T175 [P] [E2E] Test: Drag Button block from library and drop onto canvas in test/e2e/components/add-blocks.test.ts
+- [ ] T176 [P] [E2E] Test: Drag Text block from library and drop onto canvas in test/e2e/components/add-blocks.test.ts
+- [ ] T177 [P] [E2E] Test: Drag Image block from library and drop onto canvas in test/e2e/components/add-blocks.test.ts
+- [ ] T178 [P] [E2E] Test: Drag Input block from library and drop onto canvas in test/e2e/components/add-blocks.test.ts
+- [ ] T179 [P] [E2E] Test: Drag Card block from library and drop onto canvas in test/e2e/components/add-blocks.test.ts
+- [ ] T180 [P] [E2E] Test: Drag List block from library and drop onto canvas in test/e2e/components/add-blocks.test.ts
+- [ ] T181 [P] [E2E] Test: Drag Link block from library and drop onto canvas in test/e2e/components/add-blocks.test.ts
+- [ ] T182 [P] [E2E] Test: Drag Divider block from library and drop onto canvas in test/e2e/components/add-blocks.test.ts
+- [ ] T183 [P] [E2E] Test: Drag library components (Hero, Navbar, Pricing, etc.) from library and drop onto canvas in test/e2e/components/add-library-components.test.ts
+- [ ] T184 [P] [E2E] Test: Verify dropped blocks appear on canvas with correct visual representation in test/e2e/components/block-rendering.test.ts
+- [ ] T185 [P] [E2E] Test: Verify dropped blocks have correct data-cf-id attributes for tracking in test/e2e/components/element-tracking.test.ts
+
+### Canvas Interaction and Selection Tests
+
+- [ ] T186 [P] [E2E] Test: Click on canvas element selects it and highlights with ring border in test/e2e/canvas/selection.test.ts
+- [ ] T187 [P] [E2E] Test: Click on different elements changes selection correctly in test/e2e/canvas/selection.test.ts
+- [ ] T188 [P] [E2E] Test: Click on empty canvas area deselects current element in test/e2e/canvas/selection.test.ts
+- [ ] T189 [P] [E2E] Test: Selected element properties appear in properties panel in test/e2e/canvas/properties-panel.test.ts
+- [ ] T190 [P] [E2E] Test: Properties panel updates when different element is selected in test/e2e/canvas/properties-panel.test.ts
+
+### Drag and Drop on Canvas Tests
+
+- [ ] T191 [P] [E2E] Test: Drag block within canvas to reorder elements in test/e2e/canvas/drag-reorder.test.ts
+- [ ] T192 [P] [E2E] Test: Drag block from one container to another container in test/e2e/canvas/drag-containers.test.ts
+- [ ] T193 [P] [E2E] Test: Drag block to nested position (inside another block) in test/e2e/canvas/drag-nested.test.ts
+- [ ] T194 [P] [E2E] Test: Drag block to root level from nested position in test/e2e/canvas/drag-nested.test.ts
+- [ ] T195 [P] [E2E] Test: Verify visual feedback during drag operation (drop zones, highlights) in test/e2e/canvas/drag-visual-feedback.test.ts
+- [ ] T196 [P] [E2E] Test: Verify drag operation preserves block properties and content in test/e2e/canvas/drag-preservation.test.ts
+- [ ] T197 [P] [E2E] Test: Drag operation fails gracefully when dropping on invalid target in test/e2e/canvas/drag-validation.test.ts
+
+### Properties Panel Editing Tests
+
+- [ ] T198 [P] [E2E] Test: Edit text property of Heading block via properties panel in test/e2e/properties/text-editing.test.ts
+- [ ] T199 [P] [E2E] Test: Edit text property of Button block via properties panel in test/e2e/properties/text-editing.test.ts
+- [ ] T200 [P] [E2E] Test: Edit text property of Text block via properties panel in test/e2e/properties/text-editing.test.ts
+- [ ] T201 [P] [E2E] Test: Edit className property via properties panel and verify CSS classes applied in test/e2e/properties/classname-editing.test.ts
+- [ ] T202 [P] [E2E] Test: Edit number property (e.g., Heading level) via properties panel in test/e2e/properties/number-editing.test.ts
+- [ ] T203 [P] [E2E] Test: Edit boolean property (e.g., List ordered) via properties panel in test/e2e/properties/boolean-editing.test.ts
+- [ ] T204 [P] [E2E] Test: Edit Image src and alt properties via properties panel in test/e2e/properties/image-properties.test.ts
+- [ ] T205 [P] [E2E] Test: Edit Input placeholder and type properties via properties panel in test/e2e/properties/input-properties.test.ts
+- [ ] T206 [P] [E2E] Test: Verify property changes reflect immediately on canvas in test/e2e/properties/live-update.test.ts
+
+### Undo/Redo Functionality Tests
+
+- [ ] T207 [P] [E2E] Test: Undo operation reverts last canvas change in test/e2e/undo-redo/undo.test.ts
+- [ ] T208 [P] [E2E] Test: Redo operation reapplies reverted change in test/e2e/undo-redo/redo.test.ts
+- [ ] T209 [P] [E2E] Test: Multiple undo operations revert changes in correct order in test/e2e/undo-redo/multiple-undo.test.ts
+- [ ] T210 [P] [E2E] Test: Undo/redo works for block addition operations in test/e2e/undo-redo/block-operations.test.ts
+- [ ] T211 [P] [E2E] Test: Undo/redo works for block deletion operations in test/e2e/undo-redo/block-operations.test.ts
+- [ ] T212 [P] [E2E] Test: Undo/redo works for property editing operations in test/e2e/undo-redo/property-operations.test.ts
+- [ ] T213 [P] [E2E] Test: Undo/redo works for drag-and-drop operations in test/e2e/undo-redo/drag-operations.test.ts
+
+### Visual-to-Code Synchronization Tests
+
+- [ ] T214 [P] [E2E] Test: Add block to canvas and verify it syncs to code file within 500ms in test/e2e/sync/visual-to-code.test.ts
+- [ ] T215 [P] [E2E] Test: Edit block property and verify change syncs to code file in test/e2e/sync/visual-to-code.test.ts
+- [ ] T216 [P] [E2E] Test: Drag block to new position and verify structure syncs to code file in test/e2e/sync/visual-to-code.test.ts
+- [ ] T217 [P] [E2E] Test: Delete block from canvas and verify removal syncs to code file in test/e2e/sync/visual-to-code.test.ts
+- [ ] T218 [P] [E2E] Test: Multiple rapid changes are debounced and synced correctly in test/e2e/sync/debounce.test.ts
+- [ ] T219 [P] [E2E] Test: Sync status indicator shows correct state (pending, syncing, synced) in test/e2e/sync/sync-status.test.ts
+- [ ] T220 [P] [E2E] Test: Verify generated code preserves user code and only modifies className/structure in test/e2e/sync/code-preservation.test.ts
+- [ ] T221 [P] [E2E] Test: Verify generated Tailwind classes are semantic (no arbitrary values) in test/e2e/sync/tailwind-generation.test.ts
+
+### Code-to-Visual Synchronization Tests
+
+- [ ] T222 [P] [E2E] Test: Modify code file externally and verify canvas updates via WebSocket in test/e2e/sync/code-to-visual.test.ts
+- [ ] T223 [P] [E2E] Test: Add new component to code file and verify it appears in component library in test/e2e/sync/component-scan.test.ts
+- [ ] T224 [P] [E2E] Test: Modify existing component in code file and verify canvas reflects changes in test/e2e/sync/code-to-visual.test.ts
+- [ ] T225 [P] [E2E] Test: Delete component from code file and verify canvas updates accordingly in test/e2e/sync/code-to-visual.test.ts
+- [ ] T226 [P] [E2E] Test: File watcher detects changes and triggers sync within 500ms in test/e2e/sync/file-watcher.test.ts
+- [ ] T227 [P] [E2E] Test: Multiple file changes are processed correctly in sequence in test/e2e/sync/multiple-changes.test.ts
+
+### Conflict Resolution Tests
+
+- [ ] T228 [P] [E2E] Test: Simulate concurrent edit (visual and code) and verify conflict detection in test/e2e/sync/conflict-detection.test.ts
+- [ ] T229 [P] [E2E] Test: Verify conflict badge appears on affected canvas elements in test/e2e/sync/conflict-ui.test.ts
+- [ ] T230 [P] [E2E] Test: Verify conflict toast notification displays with resolution details in test/e2e/sync/conflict-ui.test.ts
+- [ ] T231 [P] [E2E] Test: Verify last-write-wins conflict resolution strategy works correctly in test/e2e/sync/conflict-resolution.test.ts
+- [ ] T232 [P] [E2E] Test: Verify conflict resolution preserves data integrity in test/e2e/sync/conflict-resolution.test.ts
+
+### Multi-Page Editing Tests
+
+- [ ] T233 [P] [E2E] Test: Page list displays all available pages from project in test/e2e/pages/page-list.test.ts
+- [ ] T234 [P] [E2E] Test: Switch between pages loads correct canvas state for each page in test/e2e/pages/page-switching.test.ts
+- [ ] T235 [P] [E2E] Test: Edit page A, switch to page B, switch back to page A - verify state preserved in test/e2e/pages/state-isolation.test.ts
+- [ ] T236 [P] [E2E] Test: Create new page and verify it appears in page list in test/e2e/pages/page-creation.test.ts
+- [ ] T237 [P] [E2E] Test: Verify page state isolation (changes to one page don't affect others) in test/e2e/pages/state-isolation.test.ts
+
+### Component Import and Scanning Tests
+
+- [ ] T238 [P] [E2E] Test: Component scanner detects all project components on initialization in test/e2e/components/component-scan.test.ts
+- [ ] T239 [P] [E2E] Test: Add new component file to project and verify it appears in component library within 5 seconds in test/e2e/components/auto-import.test.ts
+- [ ] T240 [P] [E2E] Test: Remove component file from project and verify it disappears from component library in test/e2e/components/auto-import.test.ts
+- [ ] T241 [P] [E2E] Test: Modify component file and verify component library updates with new props in test/e2e/components/auto-import.test.ts
+- [ ] T242 [P] [E2E] Test: Drag user-defined component from library onto canvas in test/e2e/components/user-components.test.ts
+- [ ] T243 [P] [E2E] Test: Verify user-defined component renders correctly on canvas with correct props in test/e2e/components/user-components.test.ts
+
+### Positioning and Layout Tests
+
+- [ ] T244 [P] [E2E] Test: Verify flex layout positioning (flex, gap, justify, align) generates correct Tailwind classes in test/e2e/positioning/flex-layout.test.ts
+- [ ] T245 [P] [E2E] Test: Verify grid layout positioning (grid-cols, gap) generates correct Tailwind classes in test/e2e/positioning/grid-layout.test.ts
+- [ ] T246 [P] [E2E] Test: Verify absolute positioning generates correct translate-x/y classes in test/e2e/positioning/absolute-positioning.test.ts
+- [ ] T247 [P] [E2E] Test: Verify relative positioning works correctly in test/e2e/positioning/relative-positioning.test.ts
+- [ ] T248 [P] [E2E] Test: Verify fixed positioning works correctly in test/e2e/positioning/fixed-positioning.test.ts
+- [ ] T249 [P] [E2E] Test: Verify sticky positioning works correctly in test/e2e/positioning/sticky-positioning.test.ts
+- [ ] T250 [P] [E2E] Test: Verify automatic layout selection (grid vs flex) based on element relationships in test/e2e/positioning/auto-layout.test.ts
+- [ ] T251 [P] [E2E] Test: Verify 20+ positioning scenarios generate semantic Tailwind classes (no arbitrary values) in test/e2e/positioning/comprehensive-positioning.test.ts
+
+### Performance and Responsiveness Tests
+
+- [ ] T252 [P] [E2E] Test: Verify canvas renders within 100ms for initial page load in test/e2e/performance/render-performance.test.ts
+- [ ] T253 [P] [E2E] Test: Verify property changes reflect on canvas within 100ms in test/e2e/performance/update-performance.test.ts
+- [ ] T254 [P] [E2E] Test: Verify sync operations complete within 500ms in test/e2e/performance/sync-performance.test.ts
+- [ ] T255 [P] [E2E] Test: Verify editor works correctly on mobile viewport sizes in test/e2e/responsive/mobile-viewport.test.ts
+- [ ] T256 [P] [E2E] Test: Verify editor works correctly on tablet viewport sizes in test/e2e/responsive/tablet-viewport.test.ts
+- [ ] T257 [P] [E2E] Test: Verify editor works correctly on desktop viewport sizes in test/e2e/responsive/desktop-viewport.test.ts
+
+### Error Handling and Edge Cases Tests
+
+- [ ] T258 [P] [E2E] Test: Verify error handling when backend is unavailable in test/e2e/errors/backend-unavailable.test.ts
+- [ ] T259 [P] [E2E] Test: Verify error handling when WebSocket connection fails in test/e2e/errors/websocket-failure.test.ts
+- [ ] T260 [P] [E2E] Test: Verify error handling when file read fails in test/e2e/errors/file-read-failure.test.ts
+- [ ] T261 [P] [E2E] Test: Verify error handling when file write fails in test/e2e/errors/file-write-failure.test.ts
+- [ ] T262 [P] [E2E] Test: Verify error recovery actions work correctly (retry, reload) in test/e2e/errors/error-recovery.test.ts
+- [ ] T263 [P] [E2E] Test: Verify editor handles malformed canvas state gracefully in test/e2e/errors/malformed-state.test.ts
+- [ ] T264 [P] [E2E] Test: Verify editor handles invalid component props gracefully in test/e2e/errors/invalid-props.test.ts
+
+### Integration and Workflow Tests
+
+- [ ] T265 [P] [E2E] Test: Complete workflow: Open page → Add blocks → Edit properties → Verify sync in test/e2e/workflows/complete-workflow.test.ts
+- [ ] T266 [P] [E2E] Test: Complete workflow: Create page → Add components → Switch pages → Verify state in test/e2e/workflows/multi-page-workflow.test.ts
+- [ ] T267 [P] [E2E] Test: Complete workflow: External code edit → Canvas update → Visual edit → Verify bidirectional sync in test/e2e/workflows/bidirectional-sync.test.ts
+- [ ] T268 [P] [E2E] Test: Complete workflow: Add user component → Use in page → Edit → Verify updates in test/e2e/workflows/component-workflow.test.ts
+- [ ] T269 [P] [E2E] Test: Verify all user scenarios from spec.md are covered by E2E tests in test/e2e/workflows/user-scenarios.test.ts
+
+### Test Execution and CI/CD
+
+- [ ] T270 [P] Create test script in package.json for running Playwright tests in test/package.json
+- [ ] T271 [P] Create test script for running tests in headless mode in test/package.json
+- [ ] T272 [P] Create test script for running tests with UI mode (headed) in test/package.json
+- [ ] T273 [P] Create test script for running specific test suites in test/package.json
+- [ ] T274 [P] Add test retry logic for flaky tests in test/playwright.config.ts
+- [ ] T275 [P] Configure test timeouts and expect timeouts appropriately in test/playwright.config.ts
+- [ ] T276 [P] Add test reporting (HTML reports, CI integration) in test/playwright.config.ts
+- [ ] T277 [P] Create GitHub Actions workflow for running E2E tests in CI (if applicable) in .github/workflows/e2e-tests.yml
+- [ ] T278 [P] Document test execution instructions in test/README.md
+
 ## Testing Strategy
 
 ### Unit Tests (Vitest, in service containers)
@@ -315,15 +495,21 @@ This document provides an actionable, dependency-ordered task list for implement
 - API endpoints: tRPC procedures work correctly
 
 ### E2E Tests (Playwright, in test container)
-- Complete visual-to-code sync cycle
-- Complete code-to-visual sync cycle
-- Multi-page editing
-- Component import
-- Cursor IDE integration
-- Code preservation
-- 20+ positioning scenarios
-- Loading/error/empty states
-- All user scenarios from spec
+- **Basic Functionality**: Page loading, canvas rendering, component library, properties panel, loading/error/empty states
+- **Component Operations**: Adding all block types (10+ basic blocks, library components), drag-and-drop from library, block rendering, element tracking
+- **Canvas Interactions**: Element selection, drag-and-drop on canvas (reorder, nested, containers), visual feedback
+- **Properties Editing**: Text, className, number, boolean, image, input properties, live updates
+- **Undo/Redo**: All operation types (add, delete, edit, drag)
+- **Synchronization**: Visual-to-code sync (add, edit, drag, delete), code-to-visual sync, debouncing, sync status indicators, code preservation, Tailwind generation
+- **Conflict Resolution**: Conflict detection, UI indicators, resolution strategy, data integrity
+- **Multi-Page Editing**: Page list, switching, state isolation, page creation
+- **Component Import**: Component scanning, auto-import, user-defined components
+- **Positioning**: Flex, grid, absolute, relative, fixed, sticky layouts, 20+ positioning scenarios
+- **Performance**: Render performance (100ms), update performance (100ms), sync performance (500ms)
+- **Responsiveness**: Mobile, tablet, desktop viewports
+- **Error Handling**: Backend unavailable, WebSocket failure, file read/write failures, error recovery, malformed state, invalid props
+- **Workflows**: Complete user workflows, multi-page workflows, bidirectional sync, component workflows
+- **All user scenarios from spec**
 
 ## Parallel Execution Examples
 
@@ -348,9 +534,27 @@ This document provides an actionable, dependency-ordered task list for implement
 - **Parallel Group 2**: T099-T108 (component scanning and import)
 - **Parallel Group 3**: T109-T113 (multi-page editing)
 
+### Phase 10 (E2E Testing)
+- **Parallel Group 1**: T156-T163 (test infrastructure setup - can be done in parallel)
+- **Parallel Group 2**: T164-T170 (basic page loading and rendering tests)
+- **Parallel Group 3**: T171-T185 (component library and block addition tests - can test multiple blocks in parallel)
+- **Parallel Group 4**: T186-T197 (canvas interaction and drag-and-drop tests)
+- **Parallel Group 5**: T198-T206 (properties panel editing tests - can test different property types in parallel)
+- **Parallel Group 6**: T207-T213 (undo/redo tests - can test different operation types in parallel)
+- **Parallel Group 7**: T214-T221 (visual-to-code sync tests)
+- **Parallel Group 8**: T222-T227 (code-to-visual sync tests)
+- **Parallel Group 9**: T228-T232 (conflict resolution tests)
+- **Parallel Group 10**: T233-T237 (multi-page editing tests)
+- **Parallel Group 11**: T238-T243 (component import and scanning tests)
+- **Parallel Group 12**: T244-T251 (positioning and layout tests - can test different layout types in parallel)
+- **Parallel Group 13**: T252-T257 (performance and responsiveness tests)
+- **Parallel Group 14**: T258-T264 (error handling and edge cases tests - can test different error scenarios in parallel)
+- **Parallel Group 15**: T265-T269 (integration and workflow tests)
+- **Parallel Group 16**: T270-T278 (test execution and CI/CD setup)
+
 ## Task Summary
 
-- **Total Tasks**: 155
+- **Total Tasks**: 278
 - **Setup Tasks**: 13 (Phase 1)
 - **Foundation Tasks**: 22 (Phase 2)
 - **Visual Editor Tasks**: 22 (Phase 3)
@@ -360,6 +564,7 @@ This document provides an actionable, dependency-ordered task list for implement
 - **IDE Integration Tasks**: 10 (Phase 7)
 - **Component Library Tasks**: 13 (Phase 8)
 - **Polish Tasks**: 19 (Phase 9)
+- **E2E Testing Tasks**: 123 (Phase 10)
 
 ### Tasks by User Story
 - **US1 (First-Time Setup)**: 22 tasks (Phase 3, 6)
