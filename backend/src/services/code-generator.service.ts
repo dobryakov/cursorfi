@@ -2,6 +2,8 @@ import * as ts from 'typescript';
 import * as prettier from 'prettier';
 import { CanvasState, CanvasNode } from '../types/canvas-state';
 import { fileService } from './file.service';
+import { codePreservationService } from './code-preservation.service';
+import { tailwindGeneratorService } from './tailwind-generator.service';
 
 class CodeGeneratorService {
   /**
@@ -29,6 +31,7 @@ class CodeGeneratorService {
           singleQuote: true,
           tabWidth: 2,
           trailingComma: 'es5',
+          printWidth: 100,
         });
       } catch (prettierError) {
         // If Prettier fails, use TypeScript formatter
@@ -45,6 +48,7 @@ class CodeGeneratorService {
   /**
    * Generate code from JSON DSL (craft.js state)
    * Converts canvas state to TSX/JSX code
+   * Uses code preservation service to preserve user code
    */
   async generateFromJSONDSL(
     filePath: string,
@@ -72,7 +76,32 @@ class CodeGeneratorService {
         }
       }
 
-      // Generate code from canvas state
+      // Build map of node IDs to Tailwind classes
+      const nodeIdToClassName = new Map<string, string>();
+      Object.values(canvasState.nodes).forEach((node) => {
+        const className = node.props?.className || '';
+        if (className) {
+          // Generate semantic Tailwind classes if needed
+          const generatedClasses = this.generateTailwindClasses(node, canvasState);
+          nodeIdToClassName.set(node.id, generatedClasses || className);
+        }
+      });
+
+      // If we have original code, use code preservation service
+      if (preserveUserCode && originalCode && nodeIdToClassName.size > 0) {
+        const preservedCode = await codePreservationService.preserveCodeAndUpdateClasses(
+          filePath,
+          originalCode,
+          nodeIdToClassName
+        );
+
+        // Validate preserved code
+        await this.validateCode(preservedCode, filePath);
+
+        return preservedCode;
+      }
+
+      // Generate code from canvas state (new file or no preservation needed)
       const code = this.canvasStateToCode(canvasState, sourceFile, originalCode);
 
       // Validate generated code
@@ -83,6 +112,36 @@ class CodeGeneratorService {
       console.error(`Error generating code from JSON DSL for ${filePath}:`, error);
       throw error;
     }
+  }
+
+  /**
+   * Generate Tailwind classes for a node using tailwind generator service
+   */
+  private generateTailwindClasses(node: CanvasNode, canvasState: CanvasState): string {
+    // Extract position from node props or custom data
+    const position = {
+      x: node.custom?.x || 0,
+      y: node.custom?.y || 0,
+      width: node.custom?.width,
+      height: node.custom?.height,
+    };
+
+    // Get parent and siblings for context
+    const parent = node.parent ? canvasState.nodes[node.parent] : null;
+    const siblings = node.parent
+      ? (canvasState.nodes[node.parent]?.nodes || [])
+          .map((id) => canvasState.nodes[id])
+          .filter((n) => n && n.id !== node.id)
+      : [];
+
+    const context = {
+      parent,
+      siblings,
+      position,
+    };
+
+    // Generate classes using tailwind generator
+    return tailwindGeneratorService.generateClasses(node, context);
   }
 
   private canvasStateToCode(

@@ -176,20 +176,20 @@ This document provides an actionable, dependency-ordered task list for implement
 
 ### Tasks
 
-- [ ] T081 [P] [US7] Implement AST manipulation preserving all non-styling code in backend/src/services/code-preservation.service.ts
-- [ ] T082 [P] [US7] Use babel-traverse for targeted className modifications in backend/src/services/code-preservation.service.ts
-- [ ] T083 [P] [US7] Preserve comments, formatting, and component logic in backend/src/services/code-preservation.service.ts
-- [ ] T084 [P] [US7] Create Tailwind class generator with semantic utilities in backend/src/services/tailwind-generator.service.ts
-- [ ] T085 [P] [US7] Implement translate-x/y classes for positioning in backend/src/services/tailwind-generator.service.ts
-- [ ] T086 [P] [US7] Implement grid-cols and grid positioning classes in backend/src/services/tailwind-generator.service.ts
-- [ ] T087 [P] [US7] Implement flex utilities for flex layouts in backend/src/services/tailwind-generator.service.ts
-- [ ] T088 [P] [US7] Implement absolute, relative, fixed, sticky positioning classes in backend/src/services/tailwind-generator.service.ts
-- [ ] T089 [P] [US7] Implement automatic layout selection (grid vs flex) based on element relationships in backend/src/services/tailwind-generator.service.ts
-- [ ] T090 [P] [US7] Ensure no arbitrary Tailwind values (e.g., top-[123px]) are generated in backend/src/services/tailwind-generator.service.ts
-- [ ] T091 [P] [US7] Implement code validation before file write to prevent syntax errors in backend/src/services/code-generator.service.ts
-- [ ] T092 [P] [US7] Use Prettier or TypeScript formatter for consistent code output in backend/src/services/code-generator.service.ts
-- [ ] T093 [P] [US7] Create test cases for 20+ positioning scenarios in backend/src/services/__tests__/tailwind-generator.test.ts
-- [ ] T094 [P] [US7] Create test cases for code preservation with various component structures in backend/src/services/__tests__/code-preservation.test.ts
+- [X] T081 [P] [US7] Implement AST manipulation preserving all non-styling code in backend/src/services/code-preservation.service.ts
+- [X] T082 [P] [US7] Use babel-traverse for targeted className modifications in backend/src/services/code-preservation.service.ts
+- [X] T083 [P] [US7] Preserve comments, formatting, and component logic in backend/src/services/code-preservation.service.ts
+- [X] T084 [P] [US7] Create Tailwind class generator with semantic utilities in backend/src/services/tailwind-generator.service.ts
+- [X] T085 [P] [US7] Implement translate-x/y classes for positioning in backend/src/services/tailwind-generator.service.ts
+- [X] T086 [P] [US7] Implement grid-cols and grid positioning classes in backend/src/services/tailwind-generator.service.ts
+- [X] T087 [P] [US7] Implement flex utilities for flex layouts in backend/src/services/tailwind-generator.service.ts
+- [X] T088 [P] [US7] Implement absolute, relative, fixed, sticky positioning classes in backend/src/services/tailwind-generator.service.ts
+- [X] T089 [P] [US7] Implement automatic layout selection (grid vs flex) based on element relationships in backend/src/services/tailwind-generator.service.ts
+- [X] T090 [P] [US7] Ensure no arbitrary Tailwind values (e.g., top-[123px]) are generated in backend/src/services/tailwind-generator.service.ts
+- [X] T091 [P] [US7] Implement code validation before file write to prevent syntax errors in backend/src/services/code-generator.service.ts
+- [X] T092 [P] [US7] Use Prettier or TypeScript formatter for consistent code output in backend/src/services/code-generator.service.ts
+- [X] T093 [P] [US7] Create test cases for 20+ positioning scenarios in backend/src/services/__tests__/tailwind-generator.test.ts
+- [X] T094 [P] [US7] Create test cases for code preservation with various component structures in backend/src/services/__tests__/code-preservation.test.ts
 
 ## Phase 6: Framework Support & Component Scanning (User Story 1, 4, 5)
 
