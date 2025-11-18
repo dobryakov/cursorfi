@@ -6,7 +6,8 @@ interface ContainerProps {
   children?: React.ReactNode;
 }
 
-export function Container({ className = '', children }: ContainerProps) {
+export function Container(props: ContainerProps = {}) {
+  const { className = '', children } = props;
   const {
     connectors: { connect, drag },
     isSelected,

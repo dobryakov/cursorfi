@@ -5,7 +5,9 @@ import { projectService } from './project.service';
 import { stat } from 'node:fs/promises';
 import { join } from 'node:path';
 
-const PROJECT_PATH = process.env.CURSORFI_PROJECT_PATH || '/app/project';
+// In Docker container, project is mounted at /app/project
+// CURSORFI_PROJECT_PATH on host is mounted to /app/project in container
+const PROJECT_PATH = '/app/project';
 
 interface Page {
   id: string;

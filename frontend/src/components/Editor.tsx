@@ -35,15 +35,38 @@ interface EditorProps {
   filePath?: string;
 }
 
+// Internal component that uses useCanvasSync - must be inside CraftEditor context
+function EditorContent({ filePath }: { filePath?: string }) {
+  // T067, T072: Use canvas sync hook for two-way synchronization
+  // This must be inside CraftEditor context to use useEditor hook
+  useCanvasSync({ filePath, debounceMs: 400 });
+
+  return (
+    <div className="flex h-screen bg-gray-50">
+      {/* Component Library Sidebar */}
+      <div className="w-64 border-r border-gray-200 bg-white overflow-y-auto">
+        <ComponentLibrary />
+      </div>
+
+      {/* Canvas Area */}
+      <div className="flex-1 overflow-auto">
+        <Canvas />
+      </div>
+
+      {/* Properties Panel */}
+      <div className="w-80 border-l border-gray-200 bg-white overflow-y-auto">
+        <PropertiesPanel />
+      </div>
+    </div>
+  );
+}
+
 export function Editor({ filePath }: EditorProps) {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<Error | null>(null);
   const [initialState, setInitialState] = useState<any>(null);
   const editorRef = useRef<any>(null);
   const { setState } = useCanvasStore();
-  
-  // T067, T072: Use canvas sync hook for two-way synchronization
-  useCanvasSync({ filePath, debounceMs: 400 });
 
   useEffect(() => {
     if (!filePath) {
@@ -114,22 +137,7 @@ export function Editor({ filePath }: EditorProps) {
       }}
       onRender={({ render }) => render}
     >
-      <div className="flex h-screen bg-gray-50">
-        {/* Component Library Sidebar */}
-        <div className="w-64 border-r border-gray-200 bg-white overflow-y-auto">
-          <ComponentLibrary />
-        </div>
-
-        {/* Canvas Area */}
-        <div className="flex-1 overflow-auto">
-          <Canvas />
-        </div>
-
-        {/* Properties Panel */}
-        <div className="w-80 border-l border-gray-200 bg-white overflow-y-auto">
-          <PropertiesPanel />
-        </div>
-      </div>
+      <EditorContent filePath={filePath} />
     </CraftEditor>
   );
 }

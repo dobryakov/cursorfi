@@ -17,6 +17,10 @@ class WebSocketService {
     console.log(`WebSocket client connected. Total clients: ${this.clients.size}`);
   }
 
+  getClientCount(): number {
+    return this.clients.size;
+  }
+
   removeClient(id: string): void {
     this.clients.delete(id);
     console.log(`WebSocket client disconnected. Total clients: ${this.clients.size}`);

@@ -44,6 +44,42 @@ export function Canvas() {
     setContextMenu(null);
   }, []);
 
+  // Handle drop from ComponentLibrary
+  const handleDrop = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    const componentName = e.dataTransfer.getData('craftjs/component');
+    
+    if (!componentName || !actions || !query) {
+      return;
+    }
+
+    try {
+      // Find the root node (Frame)
+      const rootNode = query.node('ROOT').get();
+      
+      if (rootNode) {
+        // Add the component to the canvas using CraftJS API
+        actions.addNodeTree(
+          {
+            type: {
+              resolvedName: componentName,
+            },
+            props: {},
+            nodes: [],
+          },
+          rootNode.id
+        );
+      }
+    } catch (error) {
+      console.error('Error adding component to canvas:', error);
+    }
+  }, [actions, query]);
+
+  const handleDragOver = useCallback((e: React.DragEvent) => {
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'move';
+  }, []);
+
   return (
     <div className="h-full bg-gray-100 p-8" onContextMenu={handleContextMenu}>
       {hasConflicts && (
@@ -56,7 +92,11 @@ export function Canvas() {
           </div>
         </div>
       )}
-      <div className="max-w-4xl mx-auto bg-white shadow-lg min-h-[600px] p-8 relative">
+      <div 
+        className="max-w-4xl mx-auto bg-white shadow-lg min-h-[600px] p-8 relative"
+        onDrop={handleDrop}
+        onDragOver={handleDragOver}
+      >
         <Frame>
           {/* Canvas content will be rendered here by craft.js */}
           {/* T077: Conflict badges for individual nodes can be added via craft.js node customization */}

@@ -19,9 +19,10 @@ export default defineConfig({
         changeOrigin: true,
       },
       '/ws': {
-        target: process.env.CURSORFI_BACKEND_URL || 'ws://backend:4001',
-        ws: true,
-        changeOrigin: true,
+        target: process.env.CURSORFI_BACKEND_URL || 'http://backend:4001',
+        ws: true, // Enable WebSocket proxying
+        changeOrigin: false, // Don't change origin for WebSocket
+        secure: false,
       },
     },
   },

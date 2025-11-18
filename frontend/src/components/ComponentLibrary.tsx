@@ -1,5 +1,4 @@
 import React, { useState, useMemo, useEffect } from 'react';
-import { useEditor } from '@craftjs/core';
 import { Search } from 'lucide-react';
 import { trpc } from '../lib/trpc';
 import { Container } from './blocks/Container';
@@ -58,7 +57,6 @@ export function ComponentLibrary() {
   const [selectedCategory, setSelectedCategory] = useState<string | null>(null);
   const [userComponents, setUserComponents] = useState<ComponentItem[]>([]);
   const [loading, setLoading] = useState(true);
-  const { connectors } = useEditor();
 
   // T107: Load user-defined components from backend
   useEffect(() => {
@@ -186,17 +184,11 @@ export function ComponentLibrary() {
                 <h3 className="text-xs font-semibold text-gray-500 uppercase mb-2">Built-in Components</h3>
                 <div className="grid grid-cols-1 gap-2">
                   {filteredComponents.filter(c => c.isBuiltIn).map(comp => {
-                    const Component = comp.component;
                     return (
                       <div
                         key={comp.name}
-                        ref={(ref) => {
-                          if (ref && Component) {
-                            connectors.create(ref, Component);
-                          }
-                        }}
                         className="p-3 border border-gray-200 rounded-md hover:border-blue-500 hover:bg-blue-50 cursor-move transition-colors"
-                        draggable={!!Component}
+                        draggable={!!comp.component}
                         onDragStart={handleDragStart(comp)}
                       >
                         <div className="font-medium text-sm">{comp.displayName}</div>

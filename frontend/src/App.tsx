@@ -14,6 +14,8 @@ function App() {
 
   useEffect(() => {
     // Connect WebSocket on mount
+    // Don't disconnect on unmount - WebSocket should stay connected
+    // It will be cleaned up when the page is closed
     websocketClient.connect();
 
     // Load pages list
@@ -31,8 +33,16 @@ function App() {
 
     loadPages();
 
-    return () => {
+    // Cleanup: disconnect only when page is being unloaded
+    const handleBeforeUnload = () => {
       websocketClient.disconnect();
+    };
+    window.addEventListener('beforeunload', handleBeforeUnload);
+
+    return () => {
+      window.removeEventListener('beforeunload', handleBeforeUnload);
+      // Don't disconnect here - React StrictMode causes double mount/unmount
+      // WebSocket should stay connected across component remounts
     };
   }, []);
 

@@ -7,7 +7,8 @@ interface HeadingProps {
   className?: string;
 }
 
-export function Heading({ text = 'Heading', level = 1, className = '' }: HeadingProps) {
+export function Heading(props: HeadingProps = {}) {
+  const { text = 'Heading', level = 1, className = '' } = props;
   const {
     connectors: { connect, drag },
     isSelected,

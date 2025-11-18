@@ -11,7 +11,9 @@ interface ProjectMetadata {
 }
 
 class ProjectService {
-  private projectPath = process.env.CURSORFI_PROJECT_PATH || '/app/project';
+  // In Docker container, project is mounted at /app/project
+  // CURSORFI_PROJECT_PATH on host is mounted to /app/project in container
+  private projectPath = '/app/project';
   private metadata: ProjectMetadata | null = null;
 
   async initialize(path?: string): Promise<ProjectMetadata> {
