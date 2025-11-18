@@ -14,6 +14,16 @@ This specification adheres to the following principles:
 - **Principle 9 (Multi-Framework Support)**: Supports Next.js, Vite, and Astro
 - **Principle 10 (Remote Development)**: Designed for remote server deployment
 
+## Clarifications
+
+### Session 2025-01-27
+
+- Q: When concurrent edits occur (user edits in visual editor while code is modified externally), how should conflicts be resolved? → A: Last-write-wins with visual indicator — apply most recent change and show notification/badge to user
+- Q: What observability signals should the system emit for monitoring and debugging? → A: Structured logs + metrics + request tracing — full observability with trace IDs for request flows
+- Q: How should the system handle error, empty, and loading states in the visual editor UI? → A: All states with user-friendly messages — loading indicators, empty state placeholders, and clear error messages with recovery actions
+- Q: How should the AI-assisted editing feature integrate with AI services? → A: No AI service — AI features disabled initially, deferred to future phase
+- Q: Which hosting platforms should the deployment integration support? → A: No deployment integration — remove deployment feature, defer to future phase
+
 ## Requirements
 
 ### Functional Requirements
@@ -25,6 +35,9 @@ This specification adheres to the following principles:
    - Editor provides at least 10 basic block types (containers, headings, buttons, cards, images, inputs, etc.)
    - Users can visually position, resize, and modify elements on the canvas
    - Editor supports undo/redo operations
+   - Editor displays loading indicators during async operations (file loading, sync operations, component scanning)
+   - Editor shows user-friendly empty state placeholders when canvas has no content
+   - Editor displays clear error messages with recovery actions when operations fail (file access errors, sync failures, parsing errors)
 
 2. **Two-Way File Synchronization**
    - When users make changes in the visual editor, corresponding code files are automatically updated
@@ -58,20 +71,10 @@ This specification adheres to the following principles:
    - Users can trigger editor from Cursor IDE to open specific pages
    - Full compatibility with Cursor Composer features
 
-7. **AI-Assisted Editing**
-   - Users can request design changes through natural language
-   - AI understands context of selected elements and current page
-   - AI-generated changes are automatically applied to the canvas and code
-   - Users can request responsive design adjustments, animations, and styling changes
-
-8. **Pre-built Component Library**
+7. **Pre-built Component Library**
    - Editor includes 40+ ready-to-use page sections (Hero, Navbar, Pricing, Testimonials, FAQ, CTA, Footer, etc.)
    - All pre-built components support dark mode
    - All pre-built components are responsive and work on mobile devices
-
-9. **Deployment Integration**
-   - Users can deploy edited pages directly to hosting platforms
-   - System provides one-click deployment workflow
 
 ### Non-Functional Requirements
 
@@ -94,8 +97,14 @@ This specification adheres to the following principles:
 
 - **Reliability**:
   - System recovers gracefully from file system errors
-  - Concurrent edits (editor and external) are handled without data loss
+  - Concurrent edits (editor and external) are handled using last-write-wins strategy with visual indicators (notifications/badges) to inform users of conflicts
   - System validates code before writing to prevent syntax errors
+
+- **Observability**:
+  - Structured logging with levels (info, warn, error) for all operations
+  - Metrics for sync operations, errors, performance (latency, throughput)
+  - Request tracing with trace IDs to track request flows through all system components
+  - Diagnostic output and trace IDs included in logs to enable end-to-end request tracking
 
 ## Scope
 
@@ -106,12 +115,10 @@ This specification adheres to the following principles:
 - Support for Next.js, Vite, and Astro frameworks
 - Integration with Cursor IDE for seamless workflow
 - Pre-built component library with 40+ sections
-- AI-assisted design modifications
 - Multi-page project support
 - Code preservation during all operations
 - Responsive design capabilities
 - Dark mode support
-- Deployment integration for hosting platforms
 
 ### Out of Scope
 
@@ -123,6 +130,8 @@ This specification adheres to the following principles:
 - Custom component creation UI (users create components in code, system imports them)
 - Advanced animation timeline editor
 - Design system management features
+- AI-assisted design modifications (deferred to future phase)
+- Deployment integration for hosting platforms (deferred to future phase)
 
 ## User Scenarios & Testing
 
@@ -160,13 +169,7 @@ This specification adheres to the following principles:
 2. Selects "Open in Cursor"
 3. **Acceptance**: Cursor IDE opens to correct file and line number
 
-### Scenario 7: AI-Assisted Design
-1. Developer selects an element
-2. Types request: "make this card have a hover effect like Apple's design"
-3. AI processes request
-4. **Acceptance**: Card receives appropriate styling changes, code is updated, changes are visible on canvas
-
-### Scenario 8: Code Preservation
+### Scenario 7: Code Preservation
 1. Developer has custom logic inside a component
 2. Developer modifies component styling in visual editor
 3. **Acceptance**: Custom logic code remains completely intact, only styling classes are modified
@@ -191,7 +194,7 @@ All components run in containerized environments to ensure consistency and porta
    - User makes change on canvas → Change debounced (400ms) → Visual state converted to code structure → Code formatted and validated → Written to file
 
 2. **Code to Visual Flow**:
-   - File change detected → File parsed into structure → Structure converted to visual state → Canvas updated → User sees changes
+   - File change detected → Conflict check (if concurrent edit detected, apply last-write-wins) → File parsed into structure → Structure converted to visual state → Canvas updated → User sees changes (with conflict indicator if applicable)
 
 3. **Element Tracking**:
    - Each visual element has unique identifier (data-cf-id)
@@ -292,7 +295,7 @@ Specific package versions and container images will be defined in the implementa
 
 ## Success Criteria
 
-- [ ] **Functional Completeness**: All 9 functional requirements implemented and working
+- [ ] **Functional Completeness**: All 7 functional requirements implemented and working
 - [ ] **Synchronization Accuracy**: 100% of visual changes correctly sync to code files within 1 second
 - [ ] **Synchronization Accuracy**: 100% of code changes correctly sync to visual canvas within 1 second
 - [ ] **Code Preservation**: 100% of user code remains intact after all editor operations
