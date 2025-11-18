@@ -23,6 +23,7 @@ This specification adheres to the following principles:
 - Q: How should the system handle error, empty, and loading states in the visual editor UI? → A: All states with user-friendly messages — loading indicators, empty state placeholders, and clear error messages with recovery actions
 - Q: How should the AI-assisted editing feature integrate with AI services? → A: No AI service — AI features disabled initially, deferred to future phase
 - Q: Which hosting platforms should the deployment integration support? → A: No deployment integration — remove deployment feature, defer to future phase
+- Q: Where should the project path point to — remote server (where editor runs) or local machine (where Cursor IDE runs)? → A: Path on remote server — project must be located on the same remote server where the editor runs (mounted into Docker container)
 
 ## Requirements
 
@@ -47,7 +48,8 @@ This specification adheres to the following principles:
    - Changes from editor to files are debounced to prevent excessive writes
 
 3. **Project Integration**
-   - On first launch, users specify the path to their existing project
+   - On first launch, users specify the path to their existing project on the remote server (where the editor runs)
+   - Project directory is mounted into the Docker container for file access
    - System automatically scans and imports existing components from the project
    - Imported components appear as draggable blocks in the editor
    - System supports multiple pages within a project
@@ -258,7 +260,7 @@ All tests MUST run in Docker containers. Test containers connect to main applica
 Following Principle 6 (Configuration Externalization):
 
 ### Environment Variables
-- `CURSORFI_PROJECT_PATH`: Path to target project directory
+- `CURSORFI_PROJECT_PATH`: Path to target project directory on the remote server (must be accessible from Docker container via volume mount)
 - `CURSORFI_FRONTEND_PORT`: Port for web frontend (default: non-standard port)
 - `CURSORFI_BACKEND_PORT`: Port for backend service (default: non-standard port)
 - `CURSORFI_SYNC_DEBOUNCE_MS`: Debounce delay for file writes (default: 400ms)
@@ -266,7 +268,7 @@ Following Principle 6 (Configuration Externalization):
 
 ### Config Files
 - `cursorfi.json`: Global configuration file (single file, not in user projects)
-  - Project path
+  - Project path (must be on remote server where editor runs)
   - Framework type (auto-detected, can be overridden)
   - Component scan paths
   - Custom settings
@@ -289,7 +291,7 @@ All ports MUST be configurable and MUST NOT use standard ports (80, 8080, 443) b
 - Base images supporting Bun runtime
 - Test containers with browser support for Playwright
 - Network configuration for container communication
-- Volume mounts for project file access
+- Volume mounts for project file access (project directory on remote server mounted into containers)
 
 Specific package versions and container images will be defined in the implementation plan.
 
@@ -310,18 +312,20 @@ Specific package versions and container images will be defined in the implementa
 ## Assumptions
 
 1. Users have Docker and docker-compose installed on their systems
-2. Target projects use Tailwind CSS for styling
-3. Target projects follow standard directory structures for supported frameworks
-4. Users have Cursor IDE installed for integration features
-5. Network connectivity exists between remote server (editor) and local machine (IDE) for protocol handlers
-6. File system permissions allow reading and writing to project directories
-7. Projects use modern JavaScript/TypeScript (ES6+)
-8. Users are familiar with basic web development concepts
+2. Target project is located on the remote server where the editor runs (not on local developer machine)
+3. Target projects use Tailwind CSS for styling
+4. Target projects follow standard directory structures for supported frameworks
+5. Users have Cursor IDE installed for integration features
+6. Network connectivity exists between remote server (editor) and local machine (IDE) for protocol handlers
+7. File system permissions allow reading and writing to project directories on the remote server
+8. Projects use modern JavaScript/TypeScript (ES6+)
+9. Users are familiar with basic web development concepts
 
 ## Dependencies & Prerequisites
 
-- Docker and docker-compose must be installed
-- Target project must exist and be accessible
-- Sufficient disk space for container images and project files
+- Docker and docker-compose must be installed on the remote server
+- Target project must exist and be accessible on the remote server (where editor runs)
+- Project directory must be mountable into Docker containers via volume mounts
+- Sufficient disk space for container images and project files on the remote server
 - Network access for deployment features (if used)
-- Cursor IDE installed for full integration features (optional but recommended)
+- Cursor IDE installed on local developer machine for full integration features (optional but recommended)
