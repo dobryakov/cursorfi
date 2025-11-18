@@ -104,32 +104,32 @@ This document provides an actionable, dependency-ordered task list for implement
 
 ### Tasks
 
-- [ ] T036 [P] [US1] Install craft.js and configure with React 19 in frontend/
-- [ ] T037 [P] [US1] Create Editor component with craft.js Editor and Frame in frontend/src/components/Editor.tsx
-- [ ] T038 [P] [US1] Create Canvas component for visual editing area in frontend/src/components/Canvas.tsx
-- [ ] T039 [P] [US1] Implement drag-and-drop using craft.js connectors in frontend/src/components/Canvas.tsx
-- [ ] T040 [P] [US1] Create ComponentLibrary sidebar component in frontend/src/components/ComponentLibrary.tsx
-- [ ] T041 [P] [US1] Create basic block components (Container, Heading, Button, Text) in frontend/src/components/blocks/Container.tsx, Heading.tsx, Button.tsx, Text.tsx
-- [ ] T042 [P] [US1] Create additional basic blocks (Image, Input, Card, List, Link, Divider) in frontend/src/components/blocks/
-- [ ] T043 [P] [US1] Register all basic blocks with craft.js in frontend/src/components/Editor.tsx
-- [ ] T044 [P] [US1] Implement element selection on canvas click in frontend/src/components/Canvas.tsx
-- [ ] T045 [P] [US1] Create PropertiesPanel component for selected element editing in frontend/src/components/PropertiesPanel.tsx
-- [ ] T046 [P] [US1] Implement undo/redo functionality using craft.js history in frontend/src/store/canvas.store.ts
-- [ ] T047 [P] [US1] Implement element tracking with data-cf-id attributes in frontend/src/utils/element-tracking.ts
-- [ ] T048 [P] [US1] Create loading state component for async operations in frontend/src/components/LoadingState.tsx
-- [ ] T049 [P] [US1] Create empty state placeholder component in frontend/src/components/EmptyState.tsx
-- [ ] T050 [P] [US1] Create error state component with recovery actions in frontend/src/components/ErrorState.tsx
-- [ ] T051 [P] [US1] Integrate loading/empty/error states into Editor component in frontend/src/components/Editor.tsx
-- [ ] T052 [P] [US1] Create main App component with layout (sidebar, canvas, properties panel) in frontend/src/App.tsx
-- [ ] T053 [P] [US1] Implement component library filtering and search in frontend/src/components/ComponentLibrary.tsx
-- [ ] T054 [P] [US1] Create page router with list, get, create, switch procedures in backend/src/routers/page.router.ts
-- [ ] T055 [P] [US1] Create page service for page management in backend/src/services/page.service.ts
-- [ ] T055a [P] [US1] Implement page load logic: check .cursorfi/pages.json cache, parse code if needed in backend/src/services/page.service.ts
-- [ ] T056 [P] [US1] Create canvas router with getState and updateState procedures in backend/src/routers/canvas.router.ts
-- [ ] T057 [P] [US1] Define JSON DSL structure (craft.js format) for canvas state in backend/src/types/canvas-state.ts
-- [ ] T057a [P] [US1] Implement metadata file service for .cursorfi/pages.json in backend/src/services/metadata.service.ts
-- [ ] T057b [P] [US1] Implement canvas state persistence in .cursorfi/pages.json in backend/src/services/page.service.ts
-- [ ] T057c [P] [US1] Implement JSON DSL caching strategy (load from cache if file unchanged) in backend/src/services/page.service.ts
+- [X] T036 [P] [US1] Install craft.js and configure with React 19 in frontend/
+- [X] T037 [P] [US1] Create Editor component with craft.js Editor and Frame in frontend/src/components/Editor.tsx
+- [X] T038 [P] [US1] Create Canvas component for visual editing area in frontend/src/components/Canvas.tsx
+- [X] T039 [P] [US1] Implement drag-and-drop using craft.js connectors in frontend/src/components/Canvas.tsx
+- [X] T040 [P] [US1] Create ComponentLibrary sidebar component in frontend/src/components/ComponentLibrary.tsx
+- [X] T041 [P] [US1] Create basic block components (Container, Heading, Button, Text) in frontend/src/components/blocks/Container.tsx, Heading.tsx, Button.tsx, Text.tsx
+- [X] T042 [P] [US1] Create additional basic blocks (Image, Input, Card, List, Link, Divider) in frontend/src/components/blocks/
+- [X] T043 [P] [US1] Register all basic blocks with craft.js in frontend/src/components/Editor.tsx
+- [X] T044 [P] [US1] Implement element selection on canvas click in frontend/src/components/Canvas.tsx
+- [X] T045 [P] [US1] Create PropertiesPanel component for selected element editing in frontend/src/components/PropertiesPanel.tsx
+- [X] T046 [P] [US1] Implement undo/redo functionality using craft.js history in frontend/src/store/canvas.store.ts
+- [X] T047 [P] [US1] Implement element tracking with data-cf-id attributes in frontend/src/utils/element-tracking.ts
+- [X] T048 [P] [US1] Create loading state component for async operations in frontend/src/components/LoadingState.tsx
+- [X] T049 [P] [US1] Create empty state placeholder component in frontend/src/components/EmptyState.tsx
+- [X] T050 [P] [US1] Create error state component with recovery actions in frontend/src/components/ErrorState.tsx
+- [X] T051 [P] [US1] Integrate loading/empty/error states into Editor component in frontend/src/components/Editor.tsx
+- [X] T052 [P] [US1] Create main App component with layout (sidebar, canvas, properties panel) in frontend/src/App.tsx
+- [X] T053 [P] [US1] Implement component library filtering and search in frontend/src/components/ComponentLibrary.tsx
+- [X] T054 [P] [US1] Create page router with list, get, create, switch procedures in backend/src/routers/page.router.ts
+- [X] T055 [P] [US1] Create page service for page management in backend/src/services/page.service.ts
+- [X] T055a [P] [US1] Implement page load logic: check .cursorfi/pages.json cache, parse code if needed in backend/src/services/page.service.ts
+- [X] T056 [P] [US1] Create canvas router with getState and updateState procedures in backend/src/routers/canvas.router.ts
+- [X] T057 [P] [US1] Define JSON DSL structure (craft.js format) for canvas state in backend/src/types/canvas-state.ts
+- [X] T057a [P] [US1] Implement metadata file service for .cursorfi/pages.json in backend/src/services/metadata.service.ts
+- [X] T057b [P] [US1] Implement canvas state persistence in .cursorfi/pages.json in backend/src/services/page.service.ts
+- [X] T057c [P] [US1] Implement JSON DSL caching strategy (load from cache if file unchanged) in backend/src/services/page.service.ts
 
 ## Phase 4: Two-Way Synchronization (User Story 2 & 3)
 

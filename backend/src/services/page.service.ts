@@ -1,5 +1,9 @@
 import { fileService } from './file.service';
 import { metadataService } from './metadata.service';
+import { stat } from 'node:fs/promises';
+import { join } from 'node:path';
+
+const PROJECT_PATH = process.env.CURSORFI_PROJECT_PATH || '/app/project';
 
 interface Page {
   id: string;
@@ -24,21 +28,39 @@ class PageService {
       return null;
     }
 
-    const metadata = await metadataService.getPageMetadata(filePath);
-    if (metadata?.canvasState) {
-      return {
-        id: crypto.randomUUID(),
-        filePath,
-        route: `/${filePath.replace(/\.[^/.]+$/, '').replace(/^app\/|^pages\/|^src\/pages\//, '')}`,
-        title: null,
-        canvasState: metadata.canvasState,
-        lastSyncedAt: metadata.lastSyncedAt || null,
-        lastModifiedAt: metadata.lastModifiedAt,
-        createdAt: metadata.lastModifiedAt,
-      };
+    // Get file modification time
+    const fullPath = join(PROJECT_PATH, filePath);
+    let fileMtime: Date | null = null;
+    try {
+      const stats = await stat(fullPath);
+      fileMtime = stats.mtime;
+    } catch (error) {
+      console.error('Error getting file stats:', error);
     }
 
-    // If no cached state, will need to parse code
+    // Check metadata cache
+    const metadata = await metadataService.getPageMetadata(filePath);
+    
+    // If cache exists and file hasn't changed, use cached state
+    if (metadata?.canvasState && fileMtime) {
+      const cacheMtime = new Date(metadata.lastModifiedAt);
+      if (fileMtime <= cacheMtime) {
+        // File hasn't changed since last cache, use cached state
+        return {
+          id: crypto.randomUUID(),
+          filePath,
+          route: `/${filePath.replace(/\.[^/.]+$/, '').replace(/^app\/|^pages\/|^src\/pages\//, '')}`,
+          title: null,
+          canvasState: metadata.canvasState,
+          lastSyncedAt: metadata.lastSyncedAt || null,
+          lastModifiedAt: metadata.lastModifiedAt,
+          createdAt: metadata.lastModifiedAt,
+        };
+      }
+    }
+
+    // If file changed or no cache, will need to parse code (T055a)
+    // For now, return null canvasState - parsing will be implemented in Phase 4
     return {
       id: crypto.randomUUID(),
       filePath,
@@ -46,8 +68,8 @@ class PageService {
       title: null,
       canvasState: null,
       lastSyncedAt: null,
-      lastModifiedAt: new Date().toISOString(),
-      createdAt: new Date().toISOString(),
+      lastModifiedAt: fileMtime?.toISOString() || new Date().toISOString(),
+      createdAt: fileMtime?.toISOString() || new Date().toISOString(),
     };
   }
 
