@@ -148,12 +148,12 @@ This specification adheres to the following principles:
 1. Developer drags a button block onto canvas
 2. Developer positions and styles the button visually
 3. System automatically generates code
-4. **Acceptance**: After 1 second, corresponding code file contains properly formatted code with semantic Tailwind classes
+4. **Acceptance**: Within 500ms, corresponding code file contains properly formatted code with semantic Tailwind classes
 
 ### Scenario 3: Code to Visual Sync
 1. Developer modifies code file externally (changes Tailwind classes)
 2. System detects file change
-3. **Acceptance**: Within 1 second, canvas updates to reflect code changes, element position/style matches code
+3. **Acceptance**: Within 500ms, canvas updates to reflect code changes, element position/style matches code
 
 ### Scenario 4: Multi-Page Editing
 1. Developer switches to edit a different page
@@ -298,8 +298,8 @@ Specific package versions and container images will be defined in the implementa
 ## Success Criteria
 
 - [ ] **Functional Completeness**: All 7 functional requirements implemented and working
-- [ ] **Synchronization Accuracy**: 100% of visual changes correctly sync to code files within 1 second
-- [ ] **Synchronization Accuracy**: 100% of code changes correctly sync to visual canvas within 1 second
+- [ ] **Synchronization Accuracy**: 100% of visual changes correctly sync to code files within 500ms
+- [ ] **Synchronization Accuracy**: 100% of code changes correctly sync to visual canvas within 500ms
 - [ ] **Code Preservation**: 100% of user code remains intact after all editor operations
 - [ ] **Framework Support**: System successfully works with Next.js, Vite, and Astro test projects
 - [ ] **Performance**: Editor responds to user actions within 100ms, file sync completes within 500ms

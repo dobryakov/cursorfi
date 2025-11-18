@@ -78,12 +78,13 @@ The editor should load and automatically scan your project for components and pa
    - **Vite**: `src/pages/` or `src/routes/`
    - **Astro**: `src/pages/`
 
-### Project Configuration
+### Global Configuration
 
-Create a `cursorfi.json` file in your project root (optional):
+Create a `cursorfi.json` file in the CursorFi installation directory (not in your project root). This is a global configuration file:
 
 ```json
 {
+  "projectPath": "/path/to/your/project/on/remote/server",
   "framework": "nextjs",
   "frameworkVariant": "app-router",
   "componentPaths": [
@@ -93,7 +94,7 @@ Create a `cursorfi.json` file in your project root (optional):
 }
 ```
 
-If not provided, the system will auto-detect these settings.
+**Note**: The `cursorfi.json` file is global to the CursorFi installation, not per-project. Framework type and component paths are auto-detected if not specified. The project path must point to a directory on the remote server where the editor runs.
 
 ## Basic Usage
 
@@ -179,7 +180,7 @@ The test suite covers:
 ### Components Not Appearing
 
 1. Check component scan logs: `docker-compose logs backend | grep scan`
-2. Verify component paths in `cursorfi.json`
+2. Verify component paths in global `cursorfi.json` (or rely on auto-detection)
 3. Ensure components are in supported directories (`src/components`, `app/components`, etc.)
 
 ### File Sync Not Working

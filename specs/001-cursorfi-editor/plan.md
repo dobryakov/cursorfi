@@ -79,8 +79,8 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 **Service Communication**:
 - Frontend proxies API requests to backend
 - Backend watches project files via chokidar
-- WebSocket connection for real-time file change notifications (NEEDS CLARIFICATION: WebSocket library choice)
-- Protocol handlers (cursor://, cursorfi://) handled by backend (NEEDS CLARIFICATION: protocol handler implementation details)
+- WebSocket connection for real-time file change notifications (RESOLVED: Use Bun's native WebSocket API via `Bun.serve()` with `upgrade` handler)
+- Protocol handlers (cursor://, cursorfi://) handled by backend (RESOLVED: Use Cursor IDE's port forwarding - handlers call backend via localhost:3002)
 
 **Data Flow**:
 1. Visual → Code: User action → debounce (400ms) → craft.js state → AST transformation → code generation → file write
@@ -89,7 +89,7 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 
 ### Technical Unknowns (NEEDS CLARIFICATION)
 
-1. **WebSocket Library**: Which WebSocket library for Bun? (ws, bun:ws, or native Bun WebSocket?)
+1. **WebSocket Library**: ~~Which WebSocket library for Bun? (ws, bun:ws, or native Bun WebSocket?)~~ **RESOLVED**: Use Bun's native WebSocket API (`Bun.serve` with `upgrade` handler). Bun provides built-in WebSocket support with `Bun.serve()` and the `upgrade` function, which is more performant than external libraries and aligns with the Bun-first architecture.
 2. **Protocol Handler Implementation**: How to implement cursor:// and cursorfi:// protocol handlers? (RESOLVED: Use Cursor IDE's port forwarding - handlers call backend via localhost:3002)
 3. **AST Transformation Strategy**: Best practices for preserving user code while modifying only Tailwind classes using TypeScript Compiler API + babel-traverse?
 4. **craft.js Integration**: How to integrate craft.js with React 19 and React Compiler? (Compatibility considerations)
@@ -111,7 +111,7 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 - zod
 - elysia
 - @elysiajs/trpc (or tRPC adapter for Elysia)
-- WebSocket library (TBD)
+- WebSocket: Bun native API (no external library needed)
 - Protocol handler: Lightweight script that uses Cursor IDE's port forwarding (no separate library needed)
 
 **Container Base Images**:
@@ -372,7 +372,7 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 - @babel/traverse
 - @babel/types
 - zod
-- WebSocket library (TBD)
+- WebSocket: Bun native API (no external library needed)
 
 **Testing**:
 - vitest
@@ -418,16 +418,17 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 - Technology stack matches constitution requirements
 
 ### Gate 2: Technical Feasibility
-**Status**: ⚠️ NEEDS CLARIFICATION
-- 10 technical unknowns identified (see Technical Unknowns section)
-- Research phase required to resolve all clarifications
-- No blockers identified, but implementation details need confirmation
+**Status**: ✅ MOSTLY RESOLVED
+- 3 technical unknowns resolved (WebSocket library, protocol handlers, state persistence)
+- 7 technical unknowns remain (AST transformation, craft.js integration, file watching performance, conflict resolution, component scanning, Tailwind v4 integration, remote protocol communication)
+- Research phase (Phase 0) recommended to resolve remaining clarifications
+- No critical blockers identified
 
 ### Gate 3: Dependencies Availability
 **Status**: ⚠️ NEEDS VERIFICATION
 - All packages appear to be available
 - craft.js latest 2025 version needs verification
-- WebSocket library choice needs research
-- Protocol handler implementation: Use Cursor IDE's port forwarding (simplified architecture)
+- WebSocket: Using Bun native API (no external library needed) ✅
+- Protocol handler implementation: Use Cursor IDE's port forwarding (simplified architecture) ✅
 
 **Action Required**: Complete Phase 0 research before proceeding to implementation.
