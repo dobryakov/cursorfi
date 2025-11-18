@@ -6,18 +6,21 @@ describe('TailwindGeneratorService', () => {
   describe('generateTranslateClasses', () => {
     it('should generate translate-x classes for positive x values', () => {
       const classes = tailwindGeneratorService.generateTranslateClasses(16, 0);
-      expect(classes).toContain('translate-x-1');
+      // 16px = 1rem = 4 * 0.25rem = 4 Tailwind units
+      expect(classes).toContain('translate-x-4');
     });
 
     it('should generate translate-y classes for positive y values', () => {
       const classes = tailwindGeneratorService.generateTranslateClasses(0, 16);
-      expect(classes).toContain('translate-y-1');
+      // 16px = 1rem = 4 * 0.25rem = 4 Tailwind units
+      expect(classes).toContain('translate-y-4');
     });
 
     it('should generate negative translate classes for negative values', () => {
       const classes = tailwindGeneratorService.generateTranslateClasses(-16, -16);
-      expect(classes).toContain('-translate-x-1');
-      expect(classes).toContain('-translate-y-1');
+      // -16px = -1rem = -4 * 0.25rem = -4 Tailwind units
+      expect(classes).toContain('-translate-x-4');
+      expect(classes).toContain('-translate-y-4');
     });
 
     it('should not generate classes for zero values', () => {
@@ -41,7 +44,8 @@ describe('TailwindGeneratorService', () => {
 
     it('should generate gap classes', () => {
       const classes = tailwindGeneratorService.generateGridClasses(3, 16);
-      expect(classes).toContain('gap-1');
+      // 16px = 1rem = 4 * 0.25rem = 4 Tailwind units
+      expect(classes).toContain('gap-4');
     });
 
     it('should generate row-start and col-start classes', () => {
@@ -178,8 +182,8 @@ describe('TailwindGeneratorService', () => {
       { name: 'justify-around', expected: ['flex', 'justify-around'] },
       { name: 'items-center', expected: ['flex', 'items-center'] },
       { name: 'items-end', expected: ['flex', 'items-end'] },
-      { name: 'gap-4', expected: ['flex', 'gap-1'] },
-      { name: 'gap-8', expected: ['flex', 'gap-2'] },
+      { name: 'gap-4', expected: ['flex', 'gap-4'] },
+      { name: 'gap-8', expected: ['flex', 'gap-8'] },
     ];
 
     scenarios.forEach((scenario) => {

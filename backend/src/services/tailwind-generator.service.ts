@@ -312,8 +312,14 @@ class TailwindGeneratorService {
     // Convert rem to Tailwind units (1 unit = 0.25rem)
     const tailwindUnits = Math.round(rem / 0.25);
     
-    // Clamp to valid Tailwind spacing values (0-96)
-    return Math.max(0, Math.min(96, tailwindUnits));
+    // Clamp to valid Tailwind spacing values (-96 to 96 for negative support)
+    // For positive values, clamp to 0-96
+    // For negative values, clamp to -96-0
+    if (tailwindUnits >= 0) {
+      return Math.min(96, tailwindUnits);
+    } else {
+      return Math.max(-96, tailwindUnits);
+    }
   }
 
   /**

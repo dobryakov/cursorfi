@@ -54,9 +54,10 @@ class CodePreservationService {
       };
 
       // Traverse AST and update only className attributes
+      const self = this;
       traverse(ast, {
         JSXOpeningElement(path) {
-          this.updateClassNameAttribute(path, context);
+          self.updateClassNameAttribute(path, context);
         },
         JSXOpeningFragment(path) {
           // Fragments don't have attributes, skip
@@ -119,17 +120,22 @@ class CodePreservationService {
       if (classNameAttrIndex >= 0) {
         // Update existing className attribute
         const classNameAttr = attributes[classNameAttrIndex];
-        if (babel.isJSXAttribute(classNameAttr) && classNameAttr.value) {
-          if (babel.isStringLiteral(classNameAttr.value)) {
-            classNameAttr.value.value = newClassName;
-          } else if (babel.isJSXExpressionContainer(classNameAttr.value)) {
-            // Handle className={...} expressions
-            if (babel.isStringLiteral(classNameAttr.value.expression)) {
-              classNameAttr.value.expression.value = newClassName;
-            } else {
-              // Replace complex expression with string literal
-              classNameAttr.value = babel.stringLiteral(newClassName);
+        if (babel.isJSXAttribute(classNameAttr)) {
+          if (classNameAttr.value) {
+            if (babel.isStringLiteral(classNameAttr.value)) {
+              classNameAttr.value.value = newClassName;
+            } else if (babel.isJSXExpressionContainer(classNameAttr.value)) {
+              // Handle className={...} expressions
+              if (babel.isStringLiteral(classNameAttr.value.expression)) {
+                classNameAttr.value.expression.value = newClassName;
+              } else {
+                // Replace complex expression with string literal
+                classNameAttr.value = babel.stringLiteral(newClassName);
+              }
             }
+          } else {
+            // No value, add string literal
+            classNameAttr.value = babel.stringLiteral(newClassName);
           }
         }
       } else {
