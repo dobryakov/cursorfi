@@ -2,8 +2,11 @@ import { readFile, writeFile, mkdir } from 'node:fs/promises';
 import { existsSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 
-const PROJECT_PATH = process.env.CURSORFI_PROJECT_PATH || '/app/project';
-const METADATA_PATH = join(PROJECT_PATH, '.cursorfi', 'pages.json');
+// In Docker container, project is always mounted at /app/project
+// CURSORFI_PROJECT_PATH on host is mounted to /app/project in container
+// Metadata is stored inside container at /app/.cursorfi (not in read-only project)
+const PROJECT_PATH = '/app/project';
+const METADATA_PATH = join('/app', '.cursorfi', 'pages.json');
 
 interface PageMetadata {
   canvasState: any;

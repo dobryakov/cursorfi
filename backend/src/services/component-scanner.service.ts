@@ -5,7 +5,9 @@ import { existsSync, readdirSync, statSync } from 'node:fs';
 import { join, relative, extname, basename } from 'node:path';
 import * as ts from 'typescript';
 
-const PROJECT_PATH = process.env.CURSORFI_PROJECT_PATH || '/app/project';
+// In Docker container, project is always mounted at /app/project
+// CURSORFI_PROJECT_PATH on host is mounted to /app/project in container
+const PROJECT_PATH = '/app/project';
 
 interface ComponentProp {
   name: string;

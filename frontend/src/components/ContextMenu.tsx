@@ -19,7 +19,7 @@ export function ContextMenu({ nodeId, filePath, onClose, position }: ContextMenu
   const menuRef = useRef<HTMLDivElement>(null);
   const { query } = useEditor();
   const [mappedPath, setMappedPath] = useState<{ filePath: string; lineNumber: number } | null>(null);
-  const openFileMutation = trpc.cursor.open.useMutation();
+  const [isOpening, setIsOpening] = useState(false);
 
   useEffect(() => {
     // T118: Map element to file path and line number
@@ -62,13 +62,14 @@ export function ContextMenu({ nodeId, filePath, onClose, position }: ContextMenu
   }, [onClose]);
 
   const handleOpenInCursor = async () => {
-    if (!mappedPath) {
+    if (!mappedPath || isOpening) {
       return;
     }
 
     try {
+      setIsOpening(true);
       // T117: Call backend to open file in Cursor IDE
-      const result = await openFileMutation.mutateAsync({
+      const result = await trpc.cursor.open.mutate({
         filePath: mappedPath.filePath,
         line: mappedPath.lineNumber,
       });
@@ -83,6 +84,7 @@ export function ContextMenu({ nodeId, filePath, onClose, position }: ContextMenu
       console.error('[ContextMenu] Error opening file in Cursor:', error);
       // TODO: Show error toast notification
     } finally {
+      setIsOpening(false);
       onClose();
     }
   };
@@ -102,12 +104,12 @@ export function ContextMenu({ nodeId, filePath, onClose, position }: ContextMenu
     >
       <button
         onClick={handleOpenInCursor}
-        disabled={openFileMutation.isPending}
+        disabled={isOpening}
         className="w-full px-4 py-2 text-left text-sm hover:bg-gray-100 flex items-center gap-2 disabled:opacity-50 disabled:cursor-not-allowed"
       >
         <FileCode className="h-4 w-4" />
         <span>
-          {openFileMutation.isPending ? 'Opening...' : 'Open in Cursor'}
+          {isOpening ? 'Opening...' : 'Open in Cursor'}
         </span>
       </button>
       {mappedPath && (

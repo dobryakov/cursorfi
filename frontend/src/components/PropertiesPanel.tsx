@@ -19,8 +19,35 @@ export function PropertiesPanel() {
     );
   }
 
-  const node = query.node(selectedNodeId).get();
-  const nodeData = node.data;
+  // Safely get node - it might not exist yet
+  let node;
+  let nodeData;
+  
+  try {
+    node = query.node(selectedNodeId).get();
+    nodeData = node?.data;
+  } catch (error) {
+    console.error('[PropertiesPanel] Error getting node:', error);
+    return (
+      <div className="p-4">
+        <h3 className="text-lg font-semibold mb-4">Properties</h3>
+        <div className="text-gray-500 text-sm">
+          Error loading node properties
+        </div>
+      </div>
+    );
+  }
+
+  if (!node || !nodeData) {
+    return (
+      <div className="p-4">
+        <h3 className="text-lg font-semibold mb-4">Properties</h3>
+        <div className="text-gray-500 text-sm">
+          Node not found
+        </div>
+      </div>
+    );
+  }
 
   const handlePropChange = (propName: string, value: any) => {
     actions.setProp(selectedNodeId, (props: any) => {

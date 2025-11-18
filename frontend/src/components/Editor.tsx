@@ -36,7 +36,7 @@ interface EditorProps {
 }
 
 // Internal component that uses useCanvasSync - must be inside CraftEditor context
-function EditorContent({ filePath }: { filePath?: string }) {
+function EditorContent({ filePath, initialState }: { filePath?: string; initialState?: any }) {
   // T067, T072: Use canvas sync hook for two-way synchronization
   // This must be inside CraftEditor context to use useEditor hook
   useCanvasSync({ filePath, debounceMs: 400 });
@@ -50,7 +50,7 @@ function EditorContent({ filePath }: { filePath?: string }) {
 
       {/* Canvas Area */}
       <div className="flex-1 overflow-auto">
-        <Canvas />
+        <Canvas initialState={initialState} />
       </div>
 
       {/* Properties Panel */}
@@ -80,12 +80,31 @@ export function Editor({ filePath }: EditorProps) {
         setError(null);
         
         const page = await trpc.page.get.query({ filePath });
-        if (page?.canvasState) {
+        console.log('[Editor] Page loaded:', { filePath, page, hasCanvasState: !!page?.canvasState });
+        
+        if (!page) {
+          console.error('[Editor] Page not found:', filePath, 'Will create default state');
+          // If page is not found, create default state for index.tsx
+          if (filePath && filePath.includes('index.tsx')) {
+            setInitialState(null); // Let Canvas create default state
+          } else {
+            setInitialState(null);
+          }
+          return;
+        }
+        
+        if (page.canvasState && page.canvasState.nodes && Object.keys(page.canvasState.nodes).length > 0) {
           // Convert canvas state to craft.js format
-          const craftState = page.canvasState.nodes || {};
+          // CraftJS expects nodes directly, not wrapped in canvasState
+          const craftState = page.canvasState.nodes;
+          console.log('[Editor] Setting initial state with nodes:', Object.keys(craftState));
           setInitialState(craftState);
           setState(page.canvasState);
         } else {
+          console.log('[Editor] No canvas state, will parse file...');
+          // If no canvas state, trigger a parse by calling updateCanvas with empty state
+          // This will trigger the backend to parse the file
+          // But for now, just show empty canvas - the file will be parsed on next sync
           setInitialState(null);
         }
       } catch (err) {
@@ -137,7 +156,7 @@ export function Editor({ filePath }: EditorProps) {
       }}
       onRender={({ render }) => render}
     >
-      <EditorContent filePath={filePath} />
+      <EditorContent filePath={filePath} initialState={initialState} />
     </CraftEditor>
   );
 }

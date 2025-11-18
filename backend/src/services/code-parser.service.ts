@@ -37,7 +37,7 @@ class CodeParserService {
 
       return sourceFile;
     } catch (error) {
-      console.error(`Error parsing file ${filePath}:`, error);
+      console.error(`Error parsing ${filePath} to AST:`, error);
       return null;
     }
   }
@@ -50,6 +50,7 @@ class CodeParserService {
     try {
       const sourceFile = await this.parseToAST(filePath);
       if (!sourceFile) {
+        console.error(`[CodeParser] Failed to parse AST for ${filePath}`);
         return null;
       }
 
@@ -67,12 +68,18 @@ class CodeParserService {
       // Find root component/export
       const rootNode = this.findRootComponent(sourceFile);
       if (!rootNode) {
+        console.error(`[CodeParser] Failed to find root component in ${filePath}`);
+        // Return empty state instead of null to show canvas
         return canvasState;
       }
+      
+      console.log(`[CodeParser] Found root component in ${filePath}, kind: ${rootNode.kind}`);
 
       // Build canvas nodes from AST
       const rootId = 'ROOT';
       const nodes = this.buildCanvasNodes(rootNode, sourceFile, rootId, null);
+      
+      console.log(`[CodeParser] Built ${Object.keys(nodes).length} nodes for ${filePath}`);
       
       // Set root node as canvas
       if (nodes[rootId]) {
@@ -81,9 +88,16 @@ class CodeParserService {
 
       canvasState.nodes = nodes;
 
+      if (Object.keys(nodes).length === 0) {
+        console.warn(`[CodeParser] No nodes built for ${filePath}, returning empty state`);
+      }
+
       return canvasState;
     } catch (error) {
       console.error(`Error parsing ${filePath} to JSON DSL:`, error);
+      if (error instanceof Error) {
+        console.error('Error stack:', error.stack);
+      }
       return null;
     }
   }
@@ -91,19 +105,39 @@ class CodeParserService {
   private findRootComponent(sourceFile: ts.SourceFile): ts.Node | null {
     // Look for default export function/arrow function
     const visit = (node: ts.Node): ts.Node | null => {
-      if (ts.isFunctionDeclaration(node) && node.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword && m.kind === ts.SyntaxKind.DefaultKeyword)) {
-        return node;
-      }
-      if (ts.isVariableDeclaration(node) && node.initializer) {
-        if (ts.isArrowFunction(node.initializer) || ts.isFunctionExpression(node.initializer)) {
-          return node.initializer;
+      // Check for default export function: export default function HomePage()
+      if (ts.isFunctionDeclaration(node)) {
+        const hasExport = node.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword);
+        const hasDefault = node.modifiers?.some(m => m.kind === ts.SyntaxKind.DefaultKeyword);
+        if (hasExport && hasDefault) {
+          return node;
         }
       }
-      if (ts.isExportAssignment(node)) {
+      
+      // Check for variable declaration with arrow function: export default const HomePage = () => {}
+      if (ts.isVariableStatement(node)) {
+        if (node.modifiers?.some(m => m.kind === ts.SyntaxKind.ExportKeyword)) {
+          for (const decl of node.declarationList.declarations) {
+            if (decl.initializer && (ts.isArrowFunction(decl.initializer) || ts.isFunctionExpression(decl.initializer))) {
+              return decl.initializer;
+            }
+          }
+        }
+      }
+      
+      // Check for export default assignment
+      if (ts.isExportAssignment(node) && node.isExportEquals === false) {
+        if (ts.isFunctionExpression(node.expression) || ts.isArrowFunction(node.expression)) {
+          return node.expression;
+        }
+        // Could be identifier pointing to function
         return node.expression;
       }
       
-      return ts.forEachChild(node, visit) || null;
+      const child = ts.forEachChild(node, visit);
+      if (child) return child;
+      
+      return null;
     };
 
     return visit(sourceFile);
@@ -116,29 +150,35 @@ class CodeParserService {
     parentId: string | null
   ): Record<string, CanvasNode> {
     const nodes: Record<string, CanvasNode> = {};
-    const children: string[] = [];
+    const rootChildren: string[] = [];
 
     // Extract component type
     let componentType = 'Container';
-    let props: Record<string, any> = {};
     let className = '';
 
-    // Visit JSX elements
-    const visit = (n: ts.Node, id: string, pId: string | null): void => {
+    // Visit JSX elements - recursively build the node tree
+    const visit = (n: ts.Node, parentId: string, childIndex: number): string | null => {
       if (ts.isJsxElement(n) || ts.isJsxSelfClosingElement(n)) {
         const tagName = this.getJSXTagName(n, sourceFile);
         const jsxProps = this.extractJSXProps(n, sourceFile);
         
-        const childId = `${id}_${children.length}`;
-        children.push(childId);
+        // Create unique child ID
+        const childId = `${parentId}_${childIndex}`;
+        
+        // Track root children
+        if (parentId === nodeId) {
+          rootChildren.push(childId);
+        }
 
         // Extract className if present
+        let nodeClassName = '';
         if (jsxProps.className) {
-          className = jsxProps.className;
+          nodeClassName = jsxProps.className;
           delete jsxProps.className;
         }
 
-        nodes[childId] = {
+        // First create the node with empty children array
+        const childNode: CanvasNode = {
           id: childId,
           type: {
             resolvedName: tagName,
@@ -146,37 +186,53 @@ class CodeParserService {
           isCanvas: this.isCanvasNode(tagName),
           props: {
             ...jsxProps,
-            className: className || '',
+            className: nodeClassName || '',
           },
           displayName: tagName,
           custom: {},
           nodes: [],
-          parent: pId,
+          parent: parentId,
         };
 
-        // Recursively visit children
+        nodes[childId] = childNode;
+
+        // Recursively visit children and collect their IDs
+        const childNodeIds: string[] = [];
         if (ts.isJsxElement(n)) {
-          n.children.forEach((child, index) => {
+          let index = 0;
+          n.children.forEach((child) => {
             if (ts.isJsxElement(child) || ts.isJsxSelfClosingElement(child)) {
-              visit(child, childId, childId);
+              const visitedChildId = visit(child, childId, index++);
+              if (visitedChildId) {
+                childNodeIds.push(visitedChildId);
+              }
             } else if (ts.isJsxExpression(child) && child.expression) {
               // Handle JSX expressions
               if (ts.isJsxElement(child.expression as ts.Node) || ts.isJsxSelfClosingElement(child.expression as ts.Node)) {
-                visit(child.expression as ts.Node, childId, childId);
+                const visitedChildId = visit(child.expression as ts.Node, childId, index++);
+                if (visitedChildId) {
+                  childNodeIds.push(visitedChildId);
+                }
               }
             }
           });
         }
 
-        // Update children array
-        if (nodes[childId]) {
-          nodes[childId].nodes = children.filter(c => c.startsWith(`${childId}_`));
-        }
+        // Update children array for this node
+        childNode.nodes = childNodeIds;
+        
+        return childId;
       } else {
-        // Visit children
+        // Visit children of non-JSX nodes
+        let index = 0;
+        let firstChildId: string | null = null;
         ts.forEachChild(n, (child) => {
-          visit(child, id, pId);
+          const visitedChildId = visit(child, parentId, index++);
+          if (visitedChildId && !firstChildId) {
+            firstChildId = visitedChildId;
+          }
         });
+        return firstChildId;
       }
     };
 
@@ -188,19 +244,28 @@ class CodeParserService {
         : (node as ts.ArrowFunction).body;
       
       if (body && ts.isBlock(body)) {
+        let childIndex = 0;
         body.statements.forEach((stmt) => {
           if (ts.isReturnStatement(stmt) && stmt.expression) {
-            visit(stmt.expression, nodeId, parentId);
+            visit(stmt.expression, nodeId, childIndex++);
           }
         });
       } else if (body) {
-        visit(body, nodeId, parentId);
+        visit(body, nodeId, 0);
       }
     } else {
-      visit(node, nodeId, parentId);
+      visit(node, nodeId, 0);
     }
 
-    // Create root node
+    // Create root node with only direct children
+    // Filter children to include only those that have this node as parent
+    const rootDirectChildren: string[] = [];
+    Object.entries(nodes).forEach(([nId, node]) => {
+      if ((node as any).parent === nodeId) {
+        rootDirectChildren.push(nId);
+      }
+    });
+    
     nodes[nodeId] = {
       id: nodeId,
       type: {
@@ -212,7 +277,7 @@ class CodeParserService {
       },
       displayName: componentType,
       custom: {},
-      nodes: children,
+      nodes: rootDirectChildren.sort(),
       parent: parentId,
     };
 
@@ -223,7 +288,27 @@ class CodeParserService {
     const tagNode = ts.isJsxElement(node) ? node.openingElement : node;
     
     if (ts.isIdentifier(tagNode.tagName)) {
-      return tagNode.tagName.text;
+      const tagName = tagNode.tagName.text;
+      // Map HTML tags to CraftJS components
+      const tagMap: Record<string, string> = {
+        'div': 'Container',
+        'h1': 'Heading',
+        'h2': 'Heading',
+        'h3': 'Heading',
+        'h4': 'Heading',
+        'h5': 'Heading',
+        'h6': 'Heading',
+        'p': 'Text',
+        'button': 'Button',
+        'input': 'Input',
+        'img': 'Image',
+        'a': 'Link',
+        'ul': 'List',
+        'ol': 'List',
+        'li': 'List',
+        'hr': 'Divider',
+      };
+      return tagMap[tagName] || tagName;
     }
     
     if (ts.isPropertyAccessExpression(tagNode.tagName)) {
@@ -309,4 +394,3 @@ class CodeParserService {
 }
 
 export const codeParserService = new CodeParserService();
-

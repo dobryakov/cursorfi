@@ -2,7 +2,9 @@ import chokidar from 'chokidar';
 import { join } from 'node:path';
 import { websocketService } from './websocket.service';
 
-const PROJECT_PATH = process.env.CURSORFI_PROJECT_PATH || '/app/project';
+// In Docker container, project is always mounted at /app/project
+// CURSORFI_PROJECT_PATH on host is mounted to /app/project in container
+const PROJECT_PATH = '/app/project';
 
 class FileWatcherService {
   private watcher: chokidar.FSWatcher | null = null;

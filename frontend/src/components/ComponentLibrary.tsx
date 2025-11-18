@@ -118,7 +118,21 @@ export function ComponentLibrary() {
   }, [allComponents, searchQuery, selectedCategory]);
 
   const handleDragStart = (component: ComponentItem) => (e: React.DragEvent) => {
-    e.dataTransfer.setData('craftjs/component', component.name);
+    console.log('[ComponentLibrary] Drag start:', component.name);
+    e.dataTransfer.effectAllowed = 'move';
+    e.dataTransfer.dropEffect = 'move';
+    
+    // Set data with multiple MIME types for better browser compatibility
+    try {
+      e.dataTransfer.setData('craftjs/component', component.name);
+      e.dataTransfer.setData('text/plain', component.name);
+      // Also store in dataTransfer for some browsers
+      (e.dataTransfer as any).componentName = component.name;
+      
+      console.log('[ComponentLibrary] Data set:', component.name, 'types:', Array.from(e.dataTransfer.types || []));
+    } catch (err) {
+      console.error('[ComponentLibrary] Error setting drag data:', err);
+    }
   };
 
   return (

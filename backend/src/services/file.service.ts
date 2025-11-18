@@ -1,7 +1,9 @@
 import { readFile, writeFile, access, constants } from 'node:fs/promises';
 import { join } from 'node:path';
 
-const PROJECT_PATH = process.env.CURSORFI_PROJECT_PATH || '/app/project';
+// In Docker container, project is always mounted at /app/project
+// CURSORFI_PROJECT_PATH on host is mounted to /app/project in container
+const PROJECT_PATH = '/app/project';
 
 class FileService {
   private getAbsolutePath(relativePath: string): string {
