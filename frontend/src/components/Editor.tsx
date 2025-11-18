@@ -22,6 +22,15 @@ import { List } from './blocks/List';
 import { Link } from './blocks/Link';
 import { Divider } from './blocks/Divider';
 
+// Import library components (T124-T130, T134)
+import { Hero } from './library/Hero';
+import { Navbar } from './library/Navbar';
+import { Pricing } from './library/Pricing';
+import { Testimonials } from './library/Testimonials';
+import { FAQ } from './library/FAQ';
+import { CTA } from './library/CTA';
+import { Footer } from './library/Footer';
+
 interface EditorProps {
   filePath?: string;
 }
@@ -94,6 +103,14 @@ export function Editor({ filePath }: EditorProps) {
         List,
         Link,
         Divider,
+        // Library components (T134)
+        Hero,
+        Navbar,
+        Pricing,
+        Testimonials,
+        FAQ,
+        CTA,
+        Footer,
       }}
       onRender={({ render }) => render}
     >

@@ -36,9 +36,34 @@ export function setElementId(node: any, id: string): void {
   }
 }
 
-export function mapElementToFilePath(elementId: string, node: any): { filePath: string; lineNumber: number } | null {
-  // TODO: Implement mapping from element ID to file path and line number
-  // This will be used for "Open in Cursor" functionality
-  return null;
+/**
+ * T118: Map canvas element to file path and line number
+ * Used for "Open in Cursor" functionality
+ * 
+ * @param elementId - The element ID (data-cf-id)
+ * @param node - The craft.js node data
+ * @param currentFilePath - The current page's file path (from Editor)
+ * @returns File path and line number, or null if not available
+ */
+export function mapElementToFilePath(
+  elementId: string,
+  node: any,
+  currentFilePath: string | undefined
+): { filePath: string; lineNumber: number } | null {
+  if (!currentFilePath) {
+    return null;
+  }
+
+  // Extract line number from node's custom metadata if available
+  // Line numbers are stored during code parsing (code-parser.service.ts)
+  const lineNumber = node?.custom?.['data-cf-line'] || 
+                     node?.custom?.lineNumber || 
+                     node?.props?.custom?.lineNumber ||
+                     1; // Default to line 1 if not available
+
+  return {
+    filePath: currentFilePath,
+    lineNumber: typeof lineNumber === 'number' ? lineNumber : 1,
+  };
 }
 

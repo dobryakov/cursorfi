@@ -126,6 +126,59 @@ Cursor IDE automatically forwards ports from the remote server to your local Win
 
 Protocol handlers (`cursor://` and `cursorfi://`) use the forwarded ports to communicate with the backend.
 
+### Protocol Handler Registration (Windows)
+
+To enable "Open in Cursor" functionality from the visual editor, you need to register protocol handlers on your Windows machine.
+
+#### Prerequisites
+
+1. Node.js installed on your Windows machine
+2. Cursor IDE connected to the remote server (port forwarding active)
+3. Protocol handler scripts available in `scripts/` directory
+
+#### Registration Steps
+
+**1. Register `cursor://` protocol handler:**
+
+```bash
+reg add "HKCU\Software\Classes\cursor" /ve /d "URL:cursor Protocol" /f
+reg add "HKCU\Software\Classes\cursor" /v "URL Protocol" /d "" /f
+reg add "HKCU\Software\Classes\cursor\shell\open\command" /ve /d "\"node\" \"%USERPROFILE%\\cursorfi\\scripts\\cursor-handler.js\" \"%1\"" /f
+```
+
+**2. Register `cursorfi://` protocol handler:**
+
+```bash
+reg add "HKCU\Software\Classes\cursorfi" /ve /d "URL:cursorfi Protocol" /f
+reg add "HKCU\Software\Classes\cursorfi" /v "URL Protocol" /d "" /f
+reg add "HKCU\Software\Classes\cursorfi\shell\open\command" /ve /d "\"node\" \"%USERPROFILE%\\cursorfi\\scripts\\cursorfi-handler.js\" \"%1\"" /f
+```
+
+**Note:** Adjust the path to the handler scripts based on where you've placed the CursorFi project on your Windows machine.
+
+#### Testing Protocol Handlers
+
+After registration, test the handlers:
+
+```bash
+# From the CursorFi project root
+./scripts/test-protocol-handlers.sh
+```
+
+Or manually test:
+
+```bash
+node scripts/cursor-handler.js "cursor://file/app/page.tsx:42"
+node scripts/cursorfi-handler.js "cursorfi://file/app/page.tsx:42"
+```
+
+#### Usage
+
+Once registered, you can:
+- Right-click any element in the visual editor and select "Open in Cursor"
+- The file will open in Cursor IDE at the correct line number
+- Protocol handlers automatically use Cursor IDE's port forwarding to communicate with the backend
+
 For more details, see the [Quick Start Guide](specs/001-cursorfi-editor/quickstart.md).
 
 ## Documentation

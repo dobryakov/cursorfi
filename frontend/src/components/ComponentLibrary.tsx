@@ -13,6 +13,15 @@ import { List } from './blocks/List';
 import { Link } from './blocks/Link';
 import { Divider } from './blocks/Divider';
 
+// Import library components (T124-T130, T135)
+import { Hero } from './library/Hero';
+import { Navbar } from './library/Navbar';
+import { Pricing } from './library/Pricing';
+import { Testimonials } from './library/Testimonials';
+import { FAQ } from './library/FAQ';
+import { CTA } from './library/CTA';
+import { Footer } from './library/Footer';
+
 interface ComponentItem {
   name: string;
   displayName: string;
@@ -34,6 +43,14 @@ const BUILT_IN_COMPONENTS: ComponentItem[] = [
   { name: 'List', displayName: 'List', category: 'Content', component: List, isBuiltIn: true },
   { name: 'Link', displayName: 'Link', category: 'Navigation', component: Link, isBuiltIn: true },
   { name: 'Divider', displayName: 'Divider', category: 'Layout', component: Divider, isBuiltIn: true },
+  // Library components (T124-T130, T135)
+  { name: 'Hero', displayName: 'Hero', category: 'Sections', component: Hero, isBuiltIn: true },
+  { name: 'Navbar', displayName: 'Navbar', category: 'Navigation', component: Navbar, isBuiltIn: true },
+  { name: 'Pricing', displayName: 'Pricing', category: 'Sections', component: Pricing, isBuiltIn: true },
+  { name: 'Testimonials', displayName: 'Testimonials', category: 'Sections', component: Testimonials, isBuiltIn: true },
+  { name: 'FAQ', displayName: 'FAQ', category: 'Sections', component: FAQ, isBuiltIn: true },
+  { name: 'CTA', displayName: 'CTA', category: 'Sections', component: CTA, isBuiltIn: true },
+  { name: 'Footer', displayName: 'Footer', category: 'Navigation', component: Footer, isBuiltIn: true },
 ];
 
 export function ComponentLibrary() {

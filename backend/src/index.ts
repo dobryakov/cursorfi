@@ -4,10 +4,13 @@ import { trpc } from './routers/trpc';
 import { healthRouter } from './routers/health.router';
 import { websocketService } from './services/websocket.service';
 import { fileWatcherService } from './services/file-watcher.service';
+import { tracingMiddleware } from './middleware/tracing';
+import { logger } from './utils/logger';
 
 const PORT = parseInt(process.env.CURSORFI_BACKEND_PORT || '3002', 10);
 
 const app = new Elysia()
+  .use(tracingMiddleware) // T141: Request tracing middleware
   .use(cors())
   .use(healthRouter)
   .use(trpc)
@@ -33,7 +36,7 @@ const app = new Elysia()
     },
   })
   .listen(PORT, () => {
-    console.log(`Backend server running on http://localhost:${PORT}`);
+    logger.info('Backend server started', { port: PORT });
     
     // Start file watcher
     fileWatcherService.start();

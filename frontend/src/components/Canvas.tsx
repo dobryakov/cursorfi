@@ -1,8 +1,10 @@
-import React from 'react';
+import React, { useState, useCallback } from 'react';
 import { useEditor } from '@craftjs/core';
 import { Frame } from '@craftjs/core';
 import { useCanvasStore } from '../store/canvas.store';
 import { AlertCircle } from 'lucide-react';
+import { ContextMenu } from './ContextMenu';
+import { usePageStore } from '../store/page.store';
 
 export function Canvas() {
   const { actions, query, selected } = useEditor((state) => ({
@@ -15,8 +17,35 @@ export function Canvas() {
   const conflictedNodeIds = useCanvasStore((state) => state.conflictedNodeIds);
   const hasConflicts = conflictedNodeIds.size > 0;
 
+  // T116, T117: Context menu state
+  const [contextMenu, setContextMenu] = useState<{
+    nodeId: string;
+    position: { x: number; y: number };
+  } | null>(null);
+  const currentPage = usePageStore((state) => state.currentPage);
+  const filePath = currentPage?.filePath;
+
+  // Handle right-click on canvas elements
+  const handleContextMenu = useCallback((e: React.MouseEvent) => {
+    e.preventDefault();
+    
+    // Get the selected node ID
+    const selectedNodeId = selected ? Object.keys(selected)[0] : null;
+    
+    if (selectedNodeId) {
+      setContextMenu({
+        nodeId: selectedNodeId,
+        position: { x: e.clientX, y: e.clientY },
+      });
+    }
+  }, [selected]);
+
+  const handleCloseContextMenu = useCallback(() => {
+    setContextMenu(null);
+  }, []);
+
   return (
-    <div className="h-full bg-gray-100 p-8">
+    <div className="h-full bg-gray-100 p-8" onContextMenu={handleContextMenu}>
       {hasConflicts && (
         <div className="mb-4 mx-auto max-w-4xl">
           <div className="flex items-center gap-2 rounded-md bg-yellow-50 border border-yellow-200 px-4 py-2 text-sm text-yellow-800">
@@ -33,6 +62,16 @@ export function Canvas() {
           {/* T077: Conflict badges for individual nodes can be added via craft.js node customization */}
         </Frame>
       </div>
+      
+      {/* T116, T117: Context menu for right-click actions */}
+      {contextMenu && (
+        <ContextMenu
+          nodeId={contextMenu.nodeId}
+          filePath={filePath}
+          onClose={handleCloseContextMenu}
+          position={contextMenu.position}
+        />
+      )}
     </div>
   );
 }
