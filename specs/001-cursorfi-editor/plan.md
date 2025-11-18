@@ -24,9 +24,9 @@ Before proceeding, verify compliance with:
 - ✅ **Principle 5**: Code preservation strategy: AST manipulation preserving user code, only modifying className attributes
 - ✅ **Principle 6**: All configuration externalized: .env for environment variables, cursorfi.json for project config, no hardcoded ports
 - ✅ **Principle 7**: Semantic Tailwind classes: code generator uses translate-x/y, grid-cols, flex utilities, no arbitrary values
-- ✅ **Principle 8**: Cursor IDE integration: protocol handlers (cursor://, cursorfi://) with local proxy for remote deployment
+- ✅ **Principle 8**: Cursor IDE integration: protocol handlers (cursor://, cursorfi://) using Cursor IDE's built-in port forwarding
 - ✅ **Principle 9**: Multi-framework support: Next.js (App/Pages Router), Vite, Astro with auto-detection
-- ✅ **Principle 10**: Remote deployment: backend on remote server, protocol bridge for local Cursor IDE communication
+- ✅ **Principle 10**: Remote deployment: backend on remote server, Cursor IDE's automatic port forwarding enables seamless communication
 
 **Conclusion**: All principles are fully addressed in the design. No violations detected.
 
@@ -90,13 +90,13 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 ### Technical Unknowns (NEEDS CLARIFICATION)
 
 1. **WebSocket Library**: Which WebSocket library for Bun? (ws, bun:ws, or native Bun WebSocket?)
-2. **Protocol Handler Implementation**: How to implement cursor:// and cursorfi:// protocol handlers for remote server deployment? (Custom protocol server or integration with Cursor IDE's protocol?)
+2. **Protocol Handler Implementation**: How to implement cursor:// and cursorfi:// protocol handlers? (RESOLVED: Use Cursor IDE's port forwarding - handlers call backend via localhost:3002)
 3. **AST Transformation Strategy**: Best practices for preserving user code while modifying only Tailwind classes using TypeScript Compiler API + babel-traverse?
 4. **craft.js Integration**: How to integrate craft.js with React 19 and React Compiler? (Compatibility considerations)
 5. **File Watching Performance**: How to handle file watching for 100+ component projects without performance degradation? (chokidar configuration, debouncing strategies)
 6. **Conflict Resolution**: Implementation details for last-write-wins with visual indicators (notification system, state management)
 7. **Component Scanning**: Efficient strategy for scanning and parsing 100+ components on initial load? (Parallel processing, caching)
-8. **Remote Protocol Communication**: How to establish communication between remote server (editor) and local machine (Cursor IDE) for protocol handlers?
+8. **Remote Protocol Communication**: How to establish communication between remote server (editor) and local machine (Cursor IDE)? (RESOLVED: Cursor IDE automatically forwards ports, handlers use localhost:3002)
 9. **Tailwind v4 Integration**: How to integrate Tailwind CSS v4 with Vite 6 and ensure semantic class generation works correctly?
 10. **State Persistence**: How to persist craft.js canvas state? (In-memory only, or file-based persistence for multi-page support?)
 
@@ -112,7 +112,7 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 - elysia
 - @elysiajs/trpc (or tRPC adapter for Elysia)
 - WebSocket library (TBD)
-- Protocol handler library (TBD)
+- Protocol handler: Lightweight script that uses Cursor IDE's port forwarding (no separate library needed)
 
 **Container Base Images**:
 - Frontend: `oven/bun:latest` (or specific version)
@@ -121,10 +121,11 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 
 ### Integration Points
 
-1. **Cursor IDE Protocol**: cursor://file/ protocol for opening files
-2. **CursorFi Protocol**: cursorfi:// protocol for opening pages from Cursor
-3. **File System**: Direct file access via volume mounts
-4. **Project Structure Detection**: Auto-detect Next.js (App/Pages Router), Vite, Astro
+1. **Cursor IDE Port Forwarding**: Cursor IDE automatically forwards backend port (3002) to localhost on Windows machine
+2. **Cursor IDE Protocol**: cursor://file/ protocol for opening files (uses forwarded port to call backend)
+3. **CursorFi Protocol**: cursorfi:// protocol for opening pages from Cursor (uses forwarded port)
+4. **File System**: Direct file access via volume mounts
+5. **Project Structure Detection**: Auto-detect Next.js (App/Pages Router), Vite, Astro
 
 ## Architecture
 
@@ -163,11 +164,6 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 │  │  - babel-traverse                                    │   │
 │  │  - AST manipulation                                  │   │
 │  └──────────────────────────────────────────────────────┘   │
-│  ┌──────────────────────────────────────────────────────┐   │
-│  │  Protocol Handlers                                   │   │
-│  │  - cursor:// protocol                                │   │
-│  │  - cursorfi:// protocol                              │   │
-│  └──────────────────────────────────────────────────────┘   │
 └───────────────────────┬─────────────────────────────────────┘
                         │ Volume Mount
 ┌───────────────────────┴─────────────────────────────────────┐
@@ -177,8 +173,18 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 └─────────────────────────────────────────────────────────────┘
 
 ┌─────────────────────────────────────────────────────────────┐
-│              Cursor IDE (Local Machine)                     │
-│  - Protocol client (cursor://, cursorfi://)                │
+│         Cursor IDE Port Forwarding (Automatic)              │
+│  - Forwards backend port 3002 → localhost:3002             │
+│  - Forwards frontend port 3001 → localhost:3001            │
+└───────────────────────┬─────────────────────────────────────┘
+                        │ HTTP/WebSocket via forwarded ports
+┌───────────────────────┴─────────────────────────────────────┐
+│              Cursor IDE (Local Windows Machine)             │
+│  ┌──────────────────────────────────────────────────────┐   │
+│  │  Protocol Handlers                                   │   │
+│  │  - cursor:// protocol → calls localhost:3002        │   │
+│  │  - cursorfi:// protocol → calls localhost:3002      │   │
+│  └──────────────────────────────────────────────────────┘   │
 └─────────────────────────────────────────────────────────────┘
 ```
 
@@ -196,6 +202,9 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 - Frontend and backend on same Docker network
 - Frontend proxies `/api/*` to backend
 - WebSocket connection for real-time updates
+- Cursor IDE automatically forwards ports to local Windows machine:
+  - Backend port 3002 → accessible as `localhost:3002` on Windows
+  - Frontend port 3001 → accessible as `localhost:3001` on Windows
 
 ## Implementation Steps
 
@@ -254,11 +263,12 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 5. Verify code preservation in all operations
 
 ### Phase 6: Cursor IDE Integration
-1. Implement cursor:// protocol handler
-2. Implement cursorfi:// protocol handler
+1. Implement cursor:// protocol handler (uses Cursor IDE's port forwarding)
+2. Implement cursorfi:// protocol handler (uses port forwarding)
 3. Implement right-click "Open in Cursor" functionality
-4. Implement protocol communication for remote deployment
-5. Add integration tests
+4. Backend endpoint `/api/trpc/cursor.open` accessible via forwarded port
+5. Protocol handlers call backend via `localhost:3002` (forwarded port)
+6. Add integration tests
 
 ### Phase 7: Component Library
 1. Create 40+ pre-built page sections
@@ -289,7 +299,7 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 - Synchronization layer: Handle concurrent edits
 - Component scanner: Identify all project components
 - Framework detection: Work for all supported frameworks
-- Protocol handlers: Communicate correctly
+- Protocol handlers: Communicate correctly via Cursor IDE's port forwarding
 - API endpoints: tRPC procedures work correctly
 
 ### E2E Tests (Playwright, in test container)
@@ -414,6 +424,6 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 - All packages appear to be available
 - craft.js latest 2025 version needs verification
 - WebSocket library choice needs research
-- Protocol handler implementation needs research
+- Protocol handler implementation: Use Cursor IDE's port forwarding (simplified architecture)
 
 **Action Required**: Complete Phase 0 research before proceeding to implementation.

@@ -127,7 +127,7 @@ If not provided, the system will auto-detect these settings.
 2. Select "Open in Cursor"
 3. Cursor IDE will open to the corresponding file and line number
 
-**Note**: For remote deployment, ensure the Cursor IDE proxy is running on your local machine (see Cursor IDE Integration section).
+**Note**: For remote deployment, ensure Cursor IDE is connected to the remote server (port forwarding is automatic). Protocol handlers use the forwarded ports to communicate with the backend (see Cursor IDE Integration section).
 
 ## File Synchronization
 
@@ -191,43 +191,49 @@ The test suite covers:
 
 ### Cursor IDE Integration Not Working
 
-1. Ensure Cursor IDE proxy is running on your local machine
-2. Check network connectivity between remote server and local machine
-3. Verify protocol handlers are registered (see Cursor IDE Integration section)
+1. Ensure Cursor IDE is connected to the remote server (port forwarding should be active)
+2. Verify that ports are forwarded: Check Cursor IDE's port forwarding panel
+3. Test backend accessibility: `curl http://localhost:3002/api/trpc/project.get` (should work from Windows machine)
+4. Verify protocol handlers are registered (see Cursor IDE Integration section)
+5. Check that protocol handler can access `localhost:3002` (forwarded port)
 
 ## Cursor IDE Integration
 
-### Local Proxy Setup
+### Port Forwarding (Automatic)
 
-For remote deployment, install the Cursor IDE proxy on your local machine:
+Cursor IDE automatically forwards ports from the remote server to your local Windows machine:
+- Backend port `3002` → accessible as `localhost:3002` on Windows
+- Frontend port `3001` → accessible as `localhost:3001` on Windows
+
+**No additional setup required** - port forwarding happens automatically when Cursor IDE is connected to the remote server.
+
+### Protocol Handlers
+
+Protocol handlers (`cursor://` and `cursorfi://`) use the forwarded ports to communicate with the backend:
+
+1. **Protocol Registration**: Register protocol handlers on your Windows machine
+2. **Handler Implementation**: Handlers call backend via `localhost:3002` (forwarded port)
+3. **File Opening**: When you right-click an element and select "Open in Cursor", the handler:
+   - Receives the protocol request (e.g., `cursor://file/path/to/file.tsx:42`)
+   - Calls backend: `POST http://localhost:3002/api/trpc/cursor.open`
+   - Backend responds, and Cursor IDE opens the file
+
+### Protocol Registration (Windows)
+
+Protocol handlers need to be registered on your Windows machine. A lightweight installer/script will be provided:
 
 ```bash
-npm install -g @cursorfi/proxy
-cursorfi-proxy start
-```
-
-The proxy:
-- Registers `cursor://` and `cursorfi://` protocol handlers
-- Forwards protocol requests to the remote CursorFi backend
-- Enables "Open in Cursor" functionality from the remote editor
-
-### Protocol Registration
-
-**macOS**:
-```bash
-# Protocol handlers are registered automatically by the proxy
+# Protocol handlers will be registered automatically by installer
 # Manual registration (if needed):
-defaults write com.cursorfi.proxy cursorfi-protocol -string "cursorfi://"
-```
-
-**Windows**:
-```bash
-# Protocol handlers are registered automatically by the proxy
-# Manual registration via registry (if needed):
 reg add "HKCU\Software\Classes\cursorfi" /ve /d "URL:cursorfi Protocol" /f
 reg add "HKCU\Software\Classes\cursorfi" /v "URL Protocol" /d "" /f
-reg add "HKCU\Software\Classes\cursorfi\shell\open\command" /ve /d "\"C:\path\to\cursorfi-proxy.exe\" \"%1\"" /f
+reg add "HKCU\Software\Classes\cursorfi\shell\open\command" /ve /d "\"C:\path\to\cursorfi-handler.exe\" \"%1\"" /f
 ```
+
+The handler executable is a simple script that:
+- Parses the protocol URL (file path and line number)
+- Calls the backend via `localhost:3002` (using Cursor IDE's port forwarding)
+- Opens the file in Cursor IDE using Cursor's API
 
 ## Configuration Reference
 

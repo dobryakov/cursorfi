@@ -172,30 +172,38 @@ This document consolidates research findings and technical decisions for the Cur
 
 ## 8. Remote Protocol Communication
 
-**Decision**: Use HTTP endpoints on backend for protocol requests, local proxy service for protocol registration, WebSocket for real-time notifications.
+**Decision**: Leverage Cursor IDE's built-in port forwarding to access backend directly via localhost, use protocol handlers for opening files in IDE.
 
 **Rationale**:
-- HTTP is reliable and works across network boundaries
-- Local proxy handles OS-level protocol registration (cursor://, cursorfi://)
-- WebSocket provides real-time bidirectional communication
-- Backend can initiate actions (open file) by calling local proxy HTTP endpoint
-- Local proxy can forward protocol requests to backend
+- Cursor IDE automatically forwards ports from remote server to local Windows machine
+- Backend ports (e.g., 3002) are accessible as `localhost:3002` on Windows machine
+- Protocol handlers (cursor://, cursorfi://) can directly call backend endpoints via forwarded ports
+- No need for separate proxy service - Cursor IDE's port forwarding handles network communication
+- Simpler architecture: backend → forwarded port → protocol handler → Cursor IDE
+- WebSocket connections also work through port forwarding
 
 **Alternatives Considered**:
+- Separate proxy service: Unnecessary complexity when Cursor IDE already provides port forwarding
 - Direct WebSocket between editor and IDE: Requires Cursor IDE to expose WebSocket (not available)
-- SSH tunnel: Adds complexity, requires SSH setup
-- Custom protocol over WebSocket: Unnecessary, HTTP is sufficient
+- SSH tunnel: Adds complexity, Cursor IDE's port forwarding is sufficient
 - Browser extension: Requires installation, adds friction
+- Custom protocol over WebSocket: Unnecessary, HTTP through forwarded ports is sufficient
 
 **Implementation Notes**:
-- Backend exposes: `POST /api/cursor/open` (file path, line number)
-- Local proxy service (runs on developer machine):
-  - Registers `cursor://` and `cursorfi://` protocols
-  - Listens for protocol requests
-  - Forwards to backend via HTTP or handles locally if file is local
-- Backend can call local proxy: `http://localhost:PORT/cursor/open` (if accessible)
-- Document proxy setup in installation instructions
-- Provide proxy as optional npm package: `@cursorfi/proxy`
+- Backend exposes: `POST /api/trpc/cursor.open` (file path, line number)
+- Protocol handlers (cursor://, cursorfi://) registered on Windows machine:
+  - Receive protocol requests (e.g., `cursor://file/path/to/file.tsx:42`)
+  - Parse file path and line number
+  - Call backend via forwarded port: `http://localhost:3002/api/trpc/cursor.open`
+  - Backend responds with success/error
+  - Protocol handler opens file in Cursor IDE using Cursor's API
+- For opening files from editor (right-click → "Open in Cursor"):
+  - Frontend calls backend: `POST /api/trpc/cursor.open`
+  - Backend can directly open file if it has access to Cursor IDE API, OR
+  - Backend sends WebSocket message to frontend, frontend triggers protocol handler
+- Port forwarding is automatic when Cursor IDE is connected to remote server
+- Document that users need Cursor IDE connected to remote server for integration to work
+- Protocol handler can be lightweight script/executable that uses forwarded ports
 
 ## 9. Tailwind CSS v4 Integration
 
