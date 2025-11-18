@@ -98,7 +98,7 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 7. **Component Scanning**: Efficient strategy for scanning and parsing 100+ components on initial load? (Parallel processing, caching)
 8. **Remote Protocol Communication**: How to establish communication between remote server (editor) and local machine (Cursor IDE)? (RESOLVED: Cursor IDE automatically forwards ports, handlers use localhost:3002)
 9. **Tailwind v4 Integration**: How to integrate Tailwind CSS v4 with Vite 6 and ensure semantic class generation works correctly?
-10. **State Persistence**: How to persist craft.js canvas state? (In-memory only, or file-based persistence for multi-page support?)
+10. **State Persistence**: How to persist craft.js canvas state? (RESOLVED: Dual-source architecture - JSON DSL in .cursorfi/pages.json for persistence, code files as source of truth, bidirectional sync)
 
 ### Dependencies
 
@@ -231,6 +231,8 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 8. Implement basic code parser (TypeScript Compiler API)
 9. Implement basic code generator (AST → formatted code)
 10. Set up Zustand store structure
+11. Define JSON DSL structure (craft.js format) for canvas state
+12. Implement metadata file service (.cursorfi/pages.json)
 
 ### Phase 2: Visual Editor Core
 1. Integrate craft.js with React 19
@@ -242,17 +244,19 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 7. Implement element tracking (data-cf-id system)
 
 ### Phase 3: Two-Way Synchronization
-1. Implement visual → code sync (debounced file writes)
-2. Implement code → visual sync (file change detection → canvas update)
-3. Implement conflict detection and last-write-wins resolution
-4. Implement visual conflict indicators (notifications/badges)
-5. Add comprehensive sync tests
+1. Implement visual → code sync (JSON DSL → AST → code file, debounced writes)
+2. Implement code → visual sync (code file → AST → JSON DSL → canvas update)
+3. Implement JSON DSL caching in .cursorfi/pages.json for fast loading
+4. Implement code parsing to JSON DSL reconstruction (for code → visual sync)
+5. Implement conflict detection and last-write-wins resolution
+6. Implement visual conflict indicators (notifications/badges)
+7. Add comprehensive sync tests
 
 ### Phase 4: Framework Support
 1. Implement project structure detection (Next.js/Vite/Astro)
 2. Implement component scanner (auto-discover components)
 3. Implement multi-page support
-4. Implement page switching in editor
+4. Implement page switching in editor (load JSON DSL from cache or parse code)
 5. Add framework-specific tests
 
 ### Phase 5: Code Preservation & Generation

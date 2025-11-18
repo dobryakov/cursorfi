@@ -255,6 +255,94 @@ This document consolidates research findings and technical decisions for the Cur
 - State includes: element tree, selected element, undo/redo history (last 50 actions)
 - On editor load: restore last viewed page state
 
+## 11. Page Structure Storage Architecture
+
+**Decision**: Dual-source architecture: JSON DSL (craft.js state) for visual editor, JS/TS code files as source of truth. Bidirectional sync between both representations.
+
+**Rationale**:
+- craft.js uses JSON format for internal state representation (nodes, props, hierarchy)
+- JSON DSL provides fast visual editing and undo/redo capabilities
+- JS/TS code files remain the actual source code that runs in production
+- Two-way sync ensures both representations stay in sync
+- JSON is stored in `.cursorfi/pages.json` for persistence and fast loading
+- Code files are parsed to reconstruct JSON when needed (code → visual sync)
+
+**Storage Locations**:
+
+1. **In-Memory (Zustand Store)**:
+   - Current page's canvas state as JSON object
+   - Fast access for visual operations
+   - Updated on every user interaction
+
+2. **Metadata File (`.cursorfi/pages.json`)**:
+   - Persistent storage of canvas state as JSON
+   - Structure: `{ [pagePath]: { canvasState: {...}, lastModified: timestamp } }`
+   - Used for fast page switching and editor restart recovery
+   - Gitignored (not committed to repository)
+
+3. **Code Files (JS/TS/JSX/TSX)**:
+   - Actual source code that runs in production
+   - Contains React components with Tailwind classes
+   - Source of truth for code representation
+   - Parsed to reconstruct JSON when code changes externally
+
+**JSON DSL Structure (craft.js format)**:
+
+```json
+{
+  "ROOT": {
+    "type": { "resolvedName": "Container" },
+    "isCanvas": true,
+    "props": { "className": "flex flex-col gap-4" },
+    "displayName": "Container",
+    "custom": {},
+    "nodes": ["node-1", "node-2"]
+  },
+  "node-1": {
+    "type": { "resolvedName": "Button" },
+    "isCanvas": false,
+    "props": { 
+      "className": "px-4 py-2 bg-blue-500 text-white",
+      "children": "Click me"
+    },
+    "displayName": "Button",
+    "custom": { "data-cf-id": "node-1" },
+    "parent": "ROOT"
+  }
+}
+```
+
+**Synchronization Flow**:
+
+1. **Visual → Code (User edits in canvas)**:
+   - User action → craft.js updates JSON state in memory
+   - Debounce (400ms) → AST transformation → Generate JS/TS code
+   - Write code to file → Update `.cursorfi/pages.json` with new state
+
+2. **Code → Visual (External code change)**:
+   - File watcher detects change → Parse JS/TS file with TypeScript Compiler API
+   - Extract component tree, props, className attributes
+   - Reconstruct craft.js JSON structure
+   - Update Zustand store → Canvas re-renders
+
+3. **Initial Load**:
+   - Check `.cursorfi/pages.json` for cached state
+   - If exists and file hasn't changed: load JSON directly (fast)
+   - If file changed or no cache: parse code file → generate JSON → cache in metadata
+
+**Key Points**:
+- **JSON DSL is the working format** for visual editing (craft.js native format)
+- **Code files are the source of truth** for what actually runs
+- **Bidirectional sync** ensures both stay in sync
+- **Metadata file** provides fast loading and persistence
+- **Parsing is on-demand** when code changes externally or cache is invalid
+
+**Code Preservation**:
+- When generating code from JSON: only modify className and structural props
+- Preserve all user code inside components (logic, hooks, state)
+- Use AST manipulation to surgically update only styling-related attributes
+- Never modify component function bodies or user-defined logic
+
 ## Summary
 
 All technical unknowns have been resolved with concrete decisions based on:
@@ -262,6 +350,13 @@ All technical unknowns have been resolved with concrete decisions based on:
 - Performance requirements (100ms visual response, 500ms sync)
 - Developer experience (code preservation, seamless integration)
 - Remote deployment constraints (protocol handlers, network communication)
+
+**Key Architecture Decisions**:
+1. **WebSocket**: Bun's native WebSocket API
+2. **Protocol Handlers**: Use Cursor IDE's automatic port forwarding
+3. **AST Transformation**: TypeScript Compiler API + babel-traverse
+4. **File Watching**: chokidar with optimized configuration
+5. **State Storage**: Dual-source architecture (JSON DSL + code files) with bidirectional sync
 
 All decisions align with the 10 core principles and support the feature requirements.
 

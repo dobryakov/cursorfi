@@ -124,8 +124,12 @@ This document provides an actionable, dependency-ordered task list for implement
 - [ ] T053 [P] [US1] Implement component library filtering and search in frontend/src/components/ComponentLibrary.tsx
 - [ ] T054 [P] [US1] Create page router with list, get, create, switch procedures in backend/src/routers/page.router.ts
 - [ ] T055 [P] [US1] Create page service for page management in backend/src/services/page.service.ts
+- [ ] T055a [P] [US1] Implement page load logic: check .cursorfi/pages.json cache, parse code if needed in backend/src/services/page.service.ts
 - [ ] T056 [P] [US1] Create canvas router with getState and updateState procedures in backend/src/routers/canvas.router.ts
-- [ ] T057 [P] [US1] Implement canvas state persistence in .cursorfi/pages.json in backend/src/services/page.service.ts
+- [ ] T057 [P] [US1] Define JSON DSL structure (craft.js format) for canvas state in backend/src/types/canvas-state.ts
+- [ ] T057a [P] [US1] Implement metadata file service for .cursorfi/pages.json in backend/src/services/metadata.service.ts
+- [ ] T057b [P] [US1] Implement canvas state persistence in .cursorfi/pages.json in backend/src/services/page.service.ts
+- [ ] T057c [P] [US1] Implement JSON DSL caching strategy (load from cache if file unchanged) in backend/src/services/page.service.ts
 
 ## Phase 4: Two-Way Synchronization (User Story 2 & 3)
 
@@ -140,8 +144,9 @@ This document provides an actionable, dependency-ordered task list for implement
 - [ ] T058 [P] [US2] Create code parser service using TypeScript Compiler API in backend/src/services/code-parser.service.ts
 - [ ] T059 [P] [US2] Implement AST parsing for TSX/JSX files in backend/src/services/code-parser.service.ts
 - [ ] T060 [P] [US2] Create code generator service for AST to code conversion in backend/src/services/code-generator.service.ts
-- [ ] T061 [P] [US2] Implement craft.js state to AST transformation in backend/src/services/sync.service.ts
-- [ ] T062 [P] [US2] Implement AST to craft.js state transformation in backend/src/services/sync.service.ts
+- [ ] T061 [P] [US2] Implement JSON DSL (craft.js state) to AST transformation in backend/src/services/sync.service.ts
+- [ ] T062 [P] [US3] Implement AST to JSON DSL (craft.js state) transformation in backend/src/services/sync.service.ts
+- [ ] T062a [P] [US3] Implement code file parsing to JSON DSL reconstruction in backend/src/services/code-parser.service.ts
 - [ ] T063 [P] [US2] Create sync router with trigger, getStatus, list procedures in backend/src/routers/sync.router.ts
 - [ ] T064 [P] [US2] Create sync service for visual-to-code synchronization in backend/src/services/sync.service.ts
 - [ ] T065 [P] [US2] Implement debounced file write (400ms default) in backend/src/services/sync.service.ts
