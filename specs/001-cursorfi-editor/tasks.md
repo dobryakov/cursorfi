@@ -160,9 +160,9 @@ This document provides an actionable, dependency-ordered task list for implement
 - [X] T073 [P] [US2] [US3] Implement conflict detection using timestamp comparison in backend/src/services/sync.service.ts
 - [X] T074 [P] [US2] [US3] Implement last-write-wins conflict resolution in backend/src/services/sync.service.ts
 - [X] T075 [P] [US2] [US3] Emit conflict WebSocket events with resolution details in backend/src/services/sync.service.ts
-- [ ] T076 [P] [US2] [US3] Create toast notification component for conflict alerts in frontend/src/components/Toast.tsx
-- [ ] T077 [P] [US2] [US3] Implement conflict badge on affected canvas elements in frontend/src/components/Canvas.tsx
-- [ ] T078 [P] [US2] [US3] Add sync status indicator to UI (pending, syncing, synced, error) in frontend/src/components/SyncStatus.tsx
+- [X] T076 [P] [US2] [US3] Create toast notification component for conflict alerts in frontend/src/components/Toast.tsx
+- [X] T077 [P] [US2] [US3] Implement conflict badge on affected canvas elements in frontend/src/components/Canvas.tsx
+- [X] T078 [P] [US2] [US3] Add sync status indicator to UI (pending, syncing, synced, error) in frontend/src/components/SyncStatus.tsx
 - [X] T079 [P] [US2] [US3] Implement sync operation tracking with trace IDs in backend/src/services/sync.service.ts
 - [X] T080 [P] [US2] [US3] Add structured logging for sync operations in backend/src/services/sync.service.ts
 

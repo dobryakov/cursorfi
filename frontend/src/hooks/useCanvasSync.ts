@@ -3,6 +3,7 @@ import { useEditor } from '@craftjs/core';
 import { useCanvasStore } from '../store/canvas.store';
 import { trpc } from '../lib/trpc';
 import { websocketService } from '../services/websocket.service';
+import { showToast } from '../components/Toast';
 import type { WebSocketMessage } from '../../../backend/src/types/websocket.types';
 
 interface UseCanvasSyncOptions {
@@ -15,7 +16,7 @@ interface UseCanvasSyncOptions {
  * T072: Update canvas state when fileChange event received
  */
 export function useCanvasSync({ filePath, debounceMs = 400 }: UseCanvasSyncOptions) {
-  const { setState } = useCanvasStore();
+  const { setState, setSyncStatus, addConflictedNode, clearConflicts } = useCanvasStore();
   const debounceTimerRef = useRef<NodeJS.Timeout | null>(null);
   const previousStateRef = useRef<any>(null);
   
@@ -52,14 +53,26 @@ export function useCanvasSync({ filePath, debounceMs = 400 }: UseCanvasSyncOptio
       // Set new debounce timer
       debounceTimerRef.current = setTimeout(async () => {
         try {
+          setSyncStatus('syncing', 'Saving changes...');
           // Update canvas state via page.updateCanvas procedure
           // This will trigger visual-to-code sync automatically
           await trpc.page.updateCanvas.mutate({
             filePath,
             canvasState,
           });
+          setSyncStatus('synced', 'Changes saved');
+          // Clear sync status after 2 seconds
+          setTimeout(() => {
+            setSyncStatus('pending');
+          }, 2000);
         } catch (error) {
           console.error('Error triggering visual-to-code sync:', error);
+          setSyncStatus('error', 'Failed to save changes');
+          showToast({
+            title: 'Sync Error',
+            description: 'Failed to save changes to file. Please try again.',
+            type: 'error',
+          });
         }
       }, debounceMs);
     } catch (error) {
@@ -129,28 +142,62 @@ export function useCanvasSync({ filePath, debounceMs = 400 }: UseCanvasSyncOptio
       }
     });
 
-    // Also subscribe to syncStatus events for UI feedback
+    // Also subscribe to syncStatus events for UI feedback (T078)
     const unsubscribeSync = websocketService.on('syncStatus', (message: WebSocketMessage) => {
       if (message.type === 'syncStatus') {
         const data = message.data as { status: string; pageId?: string; traceId?: string; error?: string };
-        if (data.pageId === filePath) {
-          // Handle sync status updates (can be used for UI indicators)
-          if (data.status === 'synced') {
-            console.log('Sync completed:', data.traceId);
-          } else if (data.status === 'error') {
-            console.error('Sync error:', data.error);
+        if (data.pageId === filePath || data.filePath === filePath) {
+          // Update sync status in store
+          if (data.status === 'synced' || data.status === 'completed') {
+            setSyncStatus('synced', 'Synced');
+            setTimeout(() => setSyncStatus('pending'), 2000);
+          } else if (data.status === 'in-progress' || data.status === 'syncing') {
+            setSyncStatus('syncing', 'Syncing...');
+          } else if (data.status === 'error' || data.status === 'failed') {
+            setSyncStatus('error', data.error || 'Sync failed');
+            showToast({
+              title: 'Sync Error',
+              description: data.error || 'Failed to sync changes',
+              type: 'error',
+            });
           }
         }
       }
     });
 
-    // Subscribe to conflict events
+    // Subscribe to conflict events (T076, T077)
     const unsubscribeConflict = websocketService.on('conflict', (message: WebSocketMessage) => {
       if (message.type === 'conflict') {
-        const data = message.data as { pageId: string; filePath: string; resolution: string; timestamp: string };
+        const data = message.data as { 
+          pageId: string; 
+          filePath: string; 
+          resolution: string; 
+          timestamp: string;
+          nodeIds?: string[];
+        };
         if (data.pageId === filePath || data.filePath === filePath) {
-          console.warn('Conflict detected and resolved:', data.resolution);
-          // UI can show conflict notification here
+          // Show toast notification (T076)
+          showToast({
+            title: 'File Updated Externally',
+            description: `File was modified externally. Canvas has been refreshed. (${data.resolution})`,
+            type: 'warning',
+            duration: 6000,
+          });
+
+          // Mark affected nodes as conflicted (T077)
+          if (data.nodeIds && data.nodeIds.length > 0) {
+            data.nodeIds.forEach((nodeId) => {
+              addConflictedNode(nodeId);
+              // Auto-remove conflict badge after 5 seconds
+              setTimeout(() => {
+                // Conflict badge will be removed when user interacts with element
+              }, 5000);
+            });
+          } else {
+            // If no specific node IDs, mark all nodes as potentially conflicted
+            // This will be handled by Canvas component
+            clearConflicts();
+          }
         }
       }
     });
@@ -161,7 +208,7 @@ export function useCanvasSync({ filePath, debounceMs = 400 }: UseCanvasSyncOptio
       unsubscribeSync();
       unsubscribeConflict();
     };
-  }, [filePath, setState]);
+  }, [filePath, setState, setSyncStatus, addConflictedNode, clearConflicts]);
 
   return {
     triggerSync: triggerVisualToCodeSync,

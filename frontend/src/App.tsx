@@ -1,11 +1,16 @@
 import { useEffect, useState } from 'react';
 import { websocketClient } from './lib/websocket';
 import { Editor } from './components/Editor';
+import { ToastProvider } from './components/Toast';
+import { SyncStatus } from './components/SyncStatus';
+import { useCanvasStore } from './store/canvas.store';
 import { trpc } from './lib/trpc';
 
 function App() {
   const [currentPage, setCurrentPage] = useState<string | null>(null);
   const [pages, setPages] = useState<any[]>([]);
+  const syncStatus = useCanvasStore((state) => state.syncStatus);
+  const syncMessage = useCanvasStore((state) => state.syncMessage);
 
   useEffect(() => {
     // Connect WebSocket on mount
@@ -32,16 +37,24 @@ function App() {
   }, []);
 
   return (
-    <div className="min-h-screen bg-gray-100">
-      {currentPage ? (
-        <Editor filePath={currentPage} />
-      ) : (
-        <div className="container mx-auto p-4">
-          <h1 className="text-2xl font-bold">CursorFi Visual Editor</h1>
-          <p className="mt-2 text-gray-600">No pages available. Please create a page first.</p>
-        </div>
-      )}
-    </div>
+    <ToastProvider>
+      <div className="min-h-screen bg-gray-100">
+        {/* T078: Sync status indicator */}
+        {currentPage && (
+          <div className="fixed top-4 right-4 z-50">
+            <SyncStatus status={syncStatus} message={syncMessage} />
+          </div>
+        )}
+        {currentPage ? (
+          <Editor filePath={currentPage} />
+        ) : (
+          <div className="container mx-auto p-4">
+            <h1 className="text-2xl font-bold">CursorFi Visual Editor</h1>
+            <p className="mt-2 text-gray-600">No pages available. Please create a page first.</p>
+          </div>
+        )}
+      </div>
+    </ToastProvider>
   );
 }
 

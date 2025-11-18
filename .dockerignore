@@ -1,0 +1,73 @@
+# Dependencies
+node_modules/
+**/node_modules/
+bun.lockb
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+
+# Build outputs
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Environment and config
+.env
+.env.*
+!.env.example
+env.example
+
+# Git
+.git/
+.gitignore
+.gitattributes
+
+# IDE and editor
+.vscode/
+.idea/
+*.swp
+*.swo
+*.sublime-*
+
+# OS files
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Logs
+*.log
+*.log.*
+logs/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+.nyc_output/
+*.test.js
+*.test.ts
+*.spec.js
+*.spec.ts
+
+# Docker
+Dockerfile*
+docker-compose*.yml
+.dockerignore
+
+# CursorFi specific
+.cursorfi/
+*.lockb
+
+# Documentation
+*.md
+!README.md
+docs/
+specs/
+
+# Misc
+.cache/
+.temp/
+tmp/
+
