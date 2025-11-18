@@ -59,15 +59,26 @@ class PageService {
       }
     }
 
-    // If file changed or no cache, will need to parse code (T055a)
-    // For now, return null canvasState - parsing will be implemented in Phase 4
+    // If file changed or no cache, parse code to JSON DSL (T055a, T062a)
+    const { codeParserService } = await import('./code-parser.service');
+    const canvasState = await codeParserService.parseToJSONDSL(filePath);
+    
+    // Save parsed state to metadata cache
+    if (canvasState) {
+      await metadataService.savePageMetadata(filePath, {
+        canvasState,
+        lastModifiedAt: fileMtime?.toISOString() || new Date().toISOString(),
+        lastSyncedAt: fileMtime?.toISOString() || new Date().toISOString(),
+      });
+    }
+    
     return {
       id: crypto.randomUUID(),
       filePath,
       route: `/${filePath.replace(/\.[^/.]+$/, '').replace(/^app\/|^pages\/|^src\/pages\//, '')}`,
       title: null,
-      canvasState: null,
-      lastSyncedAt: null,
+      canvasState: canvasState || null,
+      lastSyncedAt: fileMtime?.toISOString() || null,
       lastModifiedAt: fileMtime?.toISOString() || new Date().toISOString(),
       createdAt: fileMtime?.toISOString() || new Date().toISOString(),
     };
@@ -97,6 +108,11 @@ class PageService {
       lastModifiedAt: new Date().toISOString(),
       lastSyncedAt: new Date().toISOString(),
     });
+    
+    // Trigger visual-to-code sync (T066)
+    const { syncService } = await import('./sync.service');
+    await syncService.trigger(filePath, 'visual-to-code');
+    
     return { success: true };
   }
 

@@ -72,6 +72,12 @@ class FileWatcherService {
       return;
     }
 
+    // Skip .cursorfi metadata files
+    if (relativePath.includes('.cursorfi/')) {
+      return;
+    }
+
+    // Emit fileChange WebSocket event (T070)
     websocketService.broadcast({
       type: 'fileChange',
       data: {
@@ -80,6 +86,21 @@ class FileWatcherService {
         timestamp: new Date().toISOString(),
       },
     });
+
+    // Trigger code-to-visual sync for page files (T069)
+    if ((eventType === 'change' || eventType === 'add') && /\.(tsx|jsx)$/.test(filePath)) {
+      // Only trigger for page files (check if it's a page file)
+      if (relativePath.includes('/page.') || 
+          relativePath.includes('/pages/') || 
+          relativePath.includes('/app/')) {
+        // Import sync service dynamically to avoid circular dependencies
+        import('./sync.service').then(({ syncService }) => {
+          syncService.trigger(relativePath, 'code-to-visual').catch((error) => {
+            console.error(`Error triggering code-to-visual sync for ${relativePath}:`, error);
+          });
+        });
+      }
+    }
   }
 }
 

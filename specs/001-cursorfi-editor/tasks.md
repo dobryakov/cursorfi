@@ -141,30 +141,30 @@ This document provides an actionable, dependency-ordered task list for implement
 
 ### Tasks
 
-- [ ] T058 [P] [US2] Create code parser service using TypeScript Compiler API in backend/src/services/code-parser.service.ts
-- [ ] T059 [P] [US2] Implement AST parsing for TSX/JSX files in backend/src/services/code-parser.service.ts
-- [ ] T060 [P] [US2] Create code generator service for AST to code conversion in backend/src/services/code-generator.service.ts
-- [ ] T061 [P] [US2] Implement JSON DSL (craft.js state) to AST transformation in backend/src/services/sync.service.ts
-- [ ] T062 [P] [US3] Implement AST to JSON DSL (craft.js state) transformation in backend/src/services/sync.service.ts
-- [ ] T062a [P] [US3] Implement code file parsing to JSON DSL reconstruction in backend/src/services/code-parser.service.ts
-- [ ] T063 [P] [US2] Create sync router with trigger, getStatus, list procedures in backend/src/routers/sync.router.ts
-- [ ] T064 [P] [US2] Create sync service for visual-to-code synchronization in backend/src/services/sync.service.ts
-- [ ] T065 [P] [US2] Implement debounced file write (400ms default) in backend/src/services/sync.service.ts
-- [ ] T066 [P] [US2] Create page.updateCanvas procedure for visual-to-code sync in backend/src/routers/page.router.ts
-- [ ] T067 [P] [US2] Implement frontend debounced sync trigger on canvas changes in frontend/src/hooks/useCanvasSync.ts
-- [ ] T068 [P] [US3] Implement code-to-visual sync in sync service in backend/src/services/sync.service.ts
-- [ ] T069 [P] [US3] Connect file watcher to sync service for code-to-visual sync in backend/src/services/file-watcher.service.ts
-- [ ] T070 [P] [US3] Emit fileChange WebSocket events on file changes in backend/src/services/file-watcher.service.ts
-- [ ] T071 [P] [US3] Implement frontend WebSocket listener for fileChange events in frontend/src/lib/websocket.ts
-- [ ] T072 [P] [US3] Update canvas state when fileChange event received in frontend/src/hooks/useCanvasSync.ts
-- [ ] T073 [P] [US2] [US3] Implement conflict detection using timestamp comparison in backend/src/services/sync.service.ts
-- [ ] T074 [P] [US2] [US3] Implement last-write-wins conflict resolution in backend/src/services/sync.service.ts
-- [ ] T075 [P] [US2] [US3] Emit conflict WebSocket events with resolution details in backend/src/services/sync.service.ts
+- [X] T058 [P] [US2] Create code parser service using TypeScript Compiler API in backend/src/services/code-parser.service.ts
+- [X] T059 [P] [US2] Implement AST parsing for TSX/JSX files in backend/src/services/code-parser.service.ts
+- [X] T060 [P] [US2] Create code generator service for AST to code conversion in backend/src/services/code-generator.service.ts
+- [X] T061 [P] [US2] Implement JSON DSL (craft.js state) to AST transformation in backend/src/services/sync.service.ts
+- [X] T062 [P] [US3] Implement AST to JSON DSL (craft.js state) transformation in backend/src/services/sync.service.ts
+- [X] T062a [P] [US3] Implement code file parsing to JSON DSL reconstruction in backend/src/services/code-parser.service.ts
+- [X] T063 [P] [US2] Create sync router with trigger, getStatus, list procedures in backend/src/routers/sync.router.ts
+- [X] T064 [P] [US2] Create sync service for visual-to-code synchronization in backend/src/services/sync.service.ts
+- [X] T065 [P] [US2] Implement debounced file write (400ms default) in backend/src/services/sync.service.ts
+- [X] T066 [P] [US2] Create page.updateCanvas procedure for visual-to-code sync in backend/src/routers/page.router.ts
+- [X] T067 [P] [US2] Implement frontend debounced sync trigger on canvas changes in frontend/src/hooks/useCanvasSync.ts
+- [X] T068 [P] [US3] Implement code-to-visual sync in sync service in backend/src/services/sync.service.ts
+- [X] T069 [P] [US3] Connect file watcher to sync service for code-to-visual sync in backend/src/services/file-watcher.service.ts
+- [X] T070 [P] [US3] Emit fileChange WebSocket events on file changes in backend/src/services/file-watcher.service.ts
+- [X] T071 [P] [US3] Implement frontend WebSocket listener for fileChange events in frontend/src/lib/websocket.ts
+- [X] T072 [P] [US3] Update canvas state when fileChange event received in frontend/src/hooks/useCanvasSync.ts
+- [X] T073 [P] [US2] [US3] Implement conflict detection using timestamp comparison in backend/src/services/sync.service.ts
+- [X] T074 [P] [US2] [US3] Implement last-write-wins conflict resolution in backend/src/services/sync.service.ts
+- [X] T075 [P] [US2] [US3] Emit conflict WebSocket events with resolution details in backend/src/services/sync.service.ts
 - [ ] T076 [P] [US2] [US3] Create toast notification component for conflict alerts in frontend/src/components/Toast.tsx
 - [ ] T077 [P] [US2] [US3] Implement conflict badge on affected canvas elements in frontend/src/components/Canvas.tsx
 - [ ] T078 [P] [US2] [US3] Add sync status indicator to UI (pending, syncing, synced, error) in frontend/src/components/SyncStatus.tsx
-- [ ] T079 [P] [US2] [US3] Implement sync operation tracking with trace IDs in backend/src/services/sync.service.ts
-- [ ] T080 [P] [US2] [US3] Add structured logging for sync operations in backend/src/services/sync.service.ts
+- [X] T079 [P] [US2] [US3] Implement sync operation tracking with trace IDs in backend/src/services/sync.service.ts
+- [X] T080 [P] [US2] [US3] Add structured logging for sync operations in backend/src/services/sync.service.ts
 
 ## Phase 5: Code Preservation & Generation (User Story 7)
 

@@ -8,6 +8,7 @@ import { EmptyState } from './EmptyState';
 import { ErrorState } from './ErrorState';
 import { useCanvasStore } from '../store/canvas.store';
 import { trpc } from '../lib/trpc';
+import { useCanvasSync } from '../hooks/useCanvasSync';
 
 // Import all block components
 import { Container } from './blocks/Container';
@@ -31,6 +32,9 @@ export function Editor({ filePath }: EditorProps) {
   const [initialState, setInitialState] = useState<any>(null);
   const editorRef = useRef<any>(null);
   const { setState } = useCanvasStore();
+  
+  // T067, T072: Use canvas sync hook for two-way synchronization
+  useCanvasSync({ filePath, debounceMs: 400 });
 
   useEffect(() => {
     if (!filePath) {
