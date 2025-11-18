@@ -201,25 +201,25 @@ This document provides an actionable, dependency-ordered task list for implement
 
 ### Tasks
 
-- [ ] T095 [P] [US1] [US4] Implement Next.js App Router page detection in backend/src/services/framework-detector.service.ts
-- [ ] T096 [P] [US1] [US4] Implement Next.js Pages Router page detection in backend/src/services/framework-detector.service.ts
-- [ ] T097 [P] [US1] [US4] Implement Vite page detection in backend/src/services/framework-detector.service.ts
-- [ ] T098 [P] [US1] [US4] Implement Astro page detection in backend/src/services/framework-detector.service.ts
-- [ ] T099 [P] [US1] [US5] Create component scanner service with parallel file processing in backend/src/services/component-scanner.service.ts
-- [ ] T100 [P] [US1] [US5] Implement component metadata extraction (name, file path) in backend/src/services/component-scanner.service.ts
-- [ ] T101 [P] [US1] [US5] Implement component prop extraction using TypeScript Compiler API in backend/src/services/component-scanner.service.ts
-- [ ] T102 [P] [US1] [US5] Create component cache in memory (Map<filePath, ComponentMetadata>) in backend/src/services/component-scanner.service.ts
-- [ ] T103 [P] [US1] [US5] Invalidate component cache on file add/remove events in backend/src/services/component-scanner.service.ts
-- [ ] T104 [P] [US1] [US5] Create component router with list, scan, get procedures in backend/src/routers/component.router.ts
-- [ ] T105 [P] [US1] [US5] Implement component.scan procedure with parallel processing in backend/src/routers/component.router.ts
-- [ ] T106 [P] [US1] [US5] Emit componentScanComplete WebSocket event after scan in backend/src/services/component-scanner.service.ts
-- [ ] T107 [P] [US1] [US5] Update ComponentLibrary to display user-defined components in frontend/src/components/ComponentLibrary.tsx
-- [ ] T108 [P] [US1] [US5] Implement component import on file add (auto-scan) in backend/src/services/file-watcher.service.ts
-- [ ] T109 [P] [US4] Implement page switching in frontend (load different page state) in frontend/src/hooks/usePageSwitch.ts
-- [ ] T110 [P] [US4] Implement page.switch procedure to load page canvas state in backend/src/routers/page.router.ts
-- [ ] T111 [P] [US4] Create page list UI component in frontend/src/components/PageList.tsx
-- [ ] T112 [P] [US4] Implement multi-page state management in Zustand store in frontend/src/store/page.store.ts
-- [ ] T113 [P] [US4] Ensure page state isolation (changes to one page don't affect others) in backend/src/services/page.service.ts
+- [X] T095 [P] [US1] [US4] Implement Next.js App Router page detection in backend/src/services/framework-detector.service.ts
+- [X] T096 [P] [US1] [US4] Implement Next.js Pages Router page detection in backend/src/services/framework-detector.service.ts
+- [X] T097 [P] [US1] [US4] Implement Vite page detection in backend/src/services/framework-detector.service.ts
+- [X] T098 [P] [US1] [US4] Implement Astro page detection in backend/src/services/framework-detector.service.ts
+- [X] T099 [P] [US1] [US5] Create component scanner service with parallel file processing in backend/src/services/component-scanner.service.ts
+- [X] T100 [P] [US1] [US5] Implement component metadata extraction (name, file path) in backend/src/services/component-scanner.service.ts
+- [X] T101 [P] [US1] [US5] Implement component prop extraction using TypeScript Compiler API in backend/src/services/component-scanner.service.ts
+- [X] T102 [P] [US1] [US5] Create component cache in memory (Map<filePath, ComponentMetadata>) in backend/src/services/component-scanner.service.ts
+- [X] T103 [P] [US1] [US5] Invalidate component cache on file add/remove events in backend/src/services/component-scanner.service.ts
+- [X] T104 [P] [US1] [US5] Create component router with list, scan, get procedures in backend/src/routers/component.router.ts
+- [X] T105 [P] [US1] [US5] Implement component.scan procedure with parallel processing in backend/src/routers/component.router.ts
+- [X] T106 [P] [US1] [US5] Emit componentScanComplete WebSocket event after scan in backend/src/services/component-scanner.service.ts
+- [X] T107 [P] [US1] [US5] Update ComponentLibrary to display user-defined components in frontend/src/components/ComponentLibrary.tsx
+- [X] T108 [P] [US1] [US5] Implement component import on file add (auto-scan) in backend/src/services/file-watcher.service.ts
+- [X] T109 [P] [US4] Implement page switching in frontend (load different page state) in frontend/src/hooks/usePageSwitch.ts
+- [X] T110 [P] [US4] Implement page.switch procedure to load page canvas state in backend/src/routers/page.router.ts
+- [X] T111 [P] [US4] Create page list UI component in frontend/src/components/PageList.tsx
+- [X] T112 [P] [US4] Implement multi-page state management in Zustand store in frontend/src/store/page.store.ts
+- [X] T113 [P] [US4] Ensure page state isolation (changes to one page don't affect others) in backend/src/services/page.service.ts
 
 ## Phase 7: Cursor IDE Integration (User Story 6)
 

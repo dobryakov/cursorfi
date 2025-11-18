@@ -77,6 +77,23 @@ class FileWatcherService {
       return;
     }
 
+    // T108: Auto-scan component on file add/remove
+    if ((eventType === 'add' || eventType === 'unlink') && /\.(tsx|jsx|ts|js)$/.test(filePath)) {
+      // Check if it's a component file (not a page file)
+      const isComponentFile = !relativePath.includes('/page.') && 
+                              !relativePath.includes('/pages/') && 
+                              !relativePath.includes('/app/') &&
+                              (relativePath.includes('/components/') || 
+                               relativePath.includes('/component/') ||
+                               relativePath.includes('src/'));
+      
+      if (isComponentFile) {
+        import('./component-scanner.service').then(({ componentScannerService }) => {
+          componentScannerService.invalidateCache(relativePath, eventType);
+        });
+      }
+    }
+
     // Emit fileChange WebSocket event (T070)
     websocketService.broadcast({
       type: 'fileChange',

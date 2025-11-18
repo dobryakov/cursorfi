@@ -1,5 +1,7 @@
 import { fileService } from './file.service';
 import { metadataService } from './metadata.service';
+import { frameworkDetectorService } from './framework-detector.service';
+import { projectService } from './project.service';
 import { stat } from 'node:fs/promises';
 import { join } from 'node:path';
 
@@ -17,9 +19,52 @@ interface Page {
 }
 
 class PageService {
+  /**
+   * T109-T113: List all pages in the project using framework detection
+   */
   async list(): Promise<Page[]> {
-    // TODO: Implement page listing from framework detection
-    return [];
+    const projectMetadata = await projectService.getMetadata();
+    if (!projectMetadata) {
+      return [];
+    }
+
+    // Detect pages based on framework
+    const pageFiles = await frameworkDetectorService.detectPages(
+      PROJECT_PATH,
+      projectMetadata.framework,
+      projectMetadata.frameworkVariant
+    );
+
+    // Convert PageFile[] to Page[]
+    const pages: Page[] = [];
+    for (const pageFile of pageFiles) {
+      // Get file stats for lastModifiedAt
+      const fullPath = join(PROJECT_PATH, pageFile.filePath);
+      let fileMtime: Date | null = null;
+      try {
+        const stats = await stat(fullPath);
+        fileMtime = stats.mtime;
+      } catch (error) {
+        console.error(`Error getting file stats for ${pageFile.filePath}:`, error);
+        continue;
+      }
+
+      // Get cached metadata if available
+      const metadata = await metadataService.getPageMetadata(pageFile.filePath);
+      
+      pages.push({
+        id: crypto.randomUUID(),
+        filePath: pageFile.filePath,
+        route: pageFile.route,
+        title: null, // Could extract from file or metadata
+        canvasState: metadata?.canvasState || null,
+        lastSyncedAt: metadata?.lastSyncedAt || null,
+        lastModifiedAt: metadata?.lastModifiedAt || fileMtime.toISOString(),
+        createdAt: metadata?.lastModifiedAt || fileMtime.toISOString(),
+      });
+    }
+
+    return pages;
   }
 
   async get(filePath: string): Promise<Page | null> {
