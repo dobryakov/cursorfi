@@ -1,3 +1,5 @@
+This project is under construction.
+
 # CursorFi Visual Site Editor
 
 A visual site editor that runs in a web browser, providing a Figma/Webflow-style interface for building pages. The system maintains perfect bidirectional synchronization between the visual canvas and local project files, enabling developers to edit visually while maintaining clean, editable code.
