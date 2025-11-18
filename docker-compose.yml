@@ -1,0 +1,66 @@
+version: '3.8'
+
+services:
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    ports:
+      - "${CURSORFI_FRONTEND_PORT:-3001}:3001"
+    environment:
+      - CURSORFI_BACKEND_URL=http://backend:3002
+    volumes:
+      - ./frontend:/app
+      - /app/node_modules
+    depends_on:
+      - backend
+    networks:
+      - cursorfi-network
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    ports:
+      - "${CURSORFI_BACKEND_PORT:-3002}:3002"
+    environment:
+      - CURSORFI_PROJECT_PATH=${CURSORFI_PROJECT_PATH}
+      - CURSORFI_BACKEND_PORT=${CURSORFI_BACKEND_PORT:-3002}
+      - CURSORFI_SYNC_DEBOUNCE_MS=${CURSORFI_SYNC_DEBOUNCE_MS:-400}
+      - CURSORFI_LOG_LEVEL=${CURSORFI_LOG_LEVEL:-info}
+      - CURSORFI_TRACE_ENABLED=${CURSORFI_TRACE_ENABLED:-true}
+      - NODE_ENV=${NODE_ENV:-development}
+    volumes:
+      - ${CURSORFI_PROJECT_PATH}:/app/project:ro
+      - ./backend:/app
+      - /app/node_modules
+    networks:
+      - cursorfi-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:3002/api/trpc/health"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+
+  test:
+    build:
+      context: ./test
+      dockerfile: Dockerfile
+    environment:
+      - CURSORFI_FRONTEND_URL=http://frontend:3001
+      - CURSORFI_BACKEND_URL=http://backend:3002
+    volumes:
+      - ./test:/app
+      - /app/node_modules
+    depends_on:
+      - frontend
+      - backend
+    networks:
+      - cursorfi-network
+    profiles:
+      - test
+
+networks:
+  cursorfi-network:
+    driver: bridge
+

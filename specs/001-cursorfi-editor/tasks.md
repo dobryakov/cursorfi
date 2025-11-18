@@ -49,19 +49,19 @@ This document provides an actionable, dependency-ordered task list for implement
 
 ### Tasks
 
-- [ ] T001 Create project root directory structure (frontend/, backend/, test/)
-- [ ] T002 Initialize frontend package.json with Bun, TypeScript 5.6+, React 19, Vite 6 in frontend/
-- [ ] T003 Initialize backend package.json with Bun, TypeScript 5.6+, Elysia, tRPC in backend/
-- [ ] T004 Create frontend Dockerfile using oven/bun:latest base image in frontend/Dockerfile
-- [ ] T005 Create backend Dockerfile using oven/bun:latest base image in backend/Dockerfile
-- [ ] T006 Create test Dockerfile using Debian-based image with Bun + Playwright in test/Dockerfile
-- [ ] T007 Create docker-compose.yml with frontend, backend, and test services in docker-compose.yml
-- [ ] T008 Create .env.example with all required environment variables in .env.example
-- [ ] T009 Create env.example (without dot) with sample configuration in env.example
-- [ ] T010 Configure frontend TypeScript config (tsconfig.json) in frontend/tsconfig.json
-- [ ] T011 Configure backend TypeScript config (tsconfig.json) in backend/tsconfig.json
-- [ ] T012 Create .gitignore to exclude node_modules, .env, .cursorfi/ in .gitignore
-- [ ] T013 Create README.md with setup instructions in README.md
+- [X] T001 Create project root directory structure (frontend/, backend/, test/)
+- [X] T002 Initialize frontend package.json with Bun, TypeScript 5.6+, React 19, Vite 6 in frontend/
+- [X] T003 Initialize backend package.json with Bun, TypeScript 5.6+, Elysia, tRPC in backend/
+- [X] T004 Create frontend Dockerfile using oven/bun:latest base image in frontend/Dockerfile
+- [X] T005 Create backend Dockerfile using oven/bun:latest base image in backend/Dockerfile
+- [X] T006 Create test Dockerfile using Debian-based image with Bun + Playwright in test/Dockerfile
+- [X] T007 Create docker-compose.yml with frontend, backend, and test services in docker-compose.yml
+- [X] T008 Create .env.example with all required environment variables in .env.example
+- [X] T009 Create env.example (without dot) with sample configuration in env.example
+- [X] T010 Configure frontend TypeScript config (tsconfig.json) in frontend/tsconfig.json
+- [X] T011 Configure backend TypeScript config (tsconfig.json) in backend/tsconfig.json
+- [X] T012 Create .gitignore to exclude node_modules, .env, .cursorfi/ in .gitignore
+- [X] T013 Create README.md with setup instructions in README.md
 
 ## Phase 2: Foundational Infrastructure
 
@@ -71,28 +71,28 @@ This document provides an actionable, dependency-ordered task list for implement
 
 ### Tasks
 
-- [ ] T014 [P] Create backend project structure (src/routers/, src/services/, src/utils/) in backend/src/
-- [ ] T015 [P] Install and configure Elysia server in backend/src/index.ts
-- [ ] T016 [P] Install and configure tRPC with Elysia adapter in backend/src/routers/trpc.ts
-- [ ] T017 [P] Create file service for read/write operations in backend/src/services/file.service.ts
-- [ ] T018 [P] Create file router with read/write procedures in backend/src/routers/file.router.ts
-- [ ] T019 [P] Install and configure chokidar for file watching in backend/src/services/file-watcher.service.ts
-- [ ] T020 [P] Implement file watcher service with ignore patterns (node_modules, .next, .vite, .astro) in backend/src/services/file-watcher.service.ts
-- [ ] T021 [P] Configure Bun native WebSocket server in backend/src/services/websocket.service.ts
-- [ ] T022 [P] Implement WebSocket connection handling and message broadcasting in backend/src/services/websocket.service.ts
-- [ ] T023 [P] Create WebSocket event schemas (fileChange, syncStatus, componentScanComplete, conflict) in backend/src/types/websocket.types.ts
-- [ ] T024 [P] Create project router with initialize and get procedures in backend/src/routers/project.router.ts
-- [ ] T025 [P] Create project service for project initialization and metadata in backend/src/services/project.service.ts
-- [ ] T026 [P] Implement framework detection logic (Next.js, Vite, Astro) in backend/src/services/framework-detector.service.ts
-- [ ] T027 [P] Create frontend Vite configuration with React plugin in frontend/vite.config.ts
-- [ ] T028 [P] Install and configure Tailwind CSS v4 with Vite plugin in frontend/
-- [ ] T029 [P] Create frontend tRPC client setup in frontend/src/lib/trpc.ts
-- [ ] T030 [P] Create frontend Zustand store structure in frontend/src/store/index.ts
-- [ ] T031 [P] Create frontend WebSocket client connection in frontend/src/lib/websocket.ts
-- [ ] T032 [P] Configure frontend to proxy /api/* requests to backend in frontend/vite.config.ts
-- [ ] T033 [P] Create health check endpoints for frontend and backend in backend/src/routers/health.router.ts
-- [ ] T034 [P] Add volume mount configuration for project directory in docker-compose.yml
-- [ ] T035 [P] Configure non-standard ports (3001 frontend, 3002 backend) via environment variables in docker-compose.yml
+- [X] T014 [P] Create backend project structure (src/routers/, src/services/, src/utils/) in backend/src/
+- [X] T015 [P] Install and configure Elysia server in backend/src/index.ts
+- [X] T016 [P] Install and configure tRPC with Elysia adapter in backend/src/routers/trpc.ts
+- [X] T017 [P] Create file service for read/write operations in backend/src/services/file.service.ts
+- [X] T018 [P] Create file router with read/write procedures in backend/src/routers/file.router.ts
+- [X] T019 [P] Install and configure chokidar for file watching in backend/src/services/file-watcher.service.ts
+- [X] T020 [P] Implement file watcher service with ignore patterns (node_modules, .next, .vite, .astro) in backend/src/services/file-watcher.service.ts
+- [X] T021 [P] Configure Bun native WebSocket server in backend/src/services/websocket.service.ts
+- [X] T022 [P] Implement WebSocket connection handling and message broadcasting in backend/src/services/websocket.service.ts
+- [X] T023 [P] Create WebSocket event schemas (fileChange, syncStatus, componentScanComplete, conflict) in backend/src/types/websocket.types.ts
+- [X] T024 [P] Create project router with initialize and get procedures in backend/src/routers/project.router.ts
+- [X] T025 [P] Create project service for project initialization and metadata in backend/src/services/project.service.ts
+- [X] T026 [P] Implement framework detection logic (Next.js, Vite, Astro) in backend/src/services/framework-detector.service.ts
+- [X] T027 [P] Create frontend Vite configuration with React plugin in frontend/vite.config.ts
+- [X] T028 [P] Install and configure Tailwind CSS v4 with Vite plugin in frontend/
+- [X] T029 [P] Create frontend tRPC client setup in frontend/src/lib/trpc.ts
+- [X] T030 [P] Create frontend Zustand store structure in frontend/src/store/index.ts
+- [X] T031 [P] Create frontend WebSocket client connection in frontend/src/lib/websocket.ts
+- [X] T032 [P] Configure frontend to proxy /api/* requests to backend in frontend/vite.config.ts
+- [X] T033 [P] Create health check endpoints for frontend and backend in backend/src/routers/health.router.ts
+- [X] T034 [P] Add volume mount configuration for project directory in docker-compose.yml
+- [X] T035 [P] Configure non-standard ports (3001 frontend, 3002 backend) via environment variables in docker-compose.yml
 
 ## Phase 3: Visual Editor Core (User Story 1 & 2 Foundation)
 
