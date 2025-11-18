@@ -81,10 +81,14 @@ This specification adheres to the following principles:
 ### Non-Functional Requirements
 
 - **Performance**: 
-  - Visual changes appear on canvas within 100ms of user action
-  - File synchronization completes within 500ms of change detection
-  - Editor loads in under 3 seconds on standard development machines
-  - System handles projects with 100+ components without performance degradation
+  - Visual changes appear on canvas within 100ms (p95) of user action
+  - File synchronization completes within 500ms (p95) of change detection
+  - Editor loads in under 3 seconds (p95) on standard development machines
+  - System handles projects with 100+ components without performance degradation:
+    - Component scanning completes within 10 seconds (p95) for 100 components
+    - File watcher maintains < 50ms (p95) event processing latency
+    - Canvas rendering maintains 60fps during interactions
+    - Sync operations maintain < 500ms (p95) latency regardless of component count
 
 - **Security**: 
   - System only accesses files within the specified project directory
@@ -203,6 +207,13 @@ All components run in containerized environments to ensure consistency and porta
    - Identifiers map between visual representation and code elements
    - Identifiers preserved during all operations
 
+4. **JSON DSL (Canvas State Representation)**:
+   - The visual canvas state is represented as a JSON DSL (Domain-Specific Language) in craft.js format
+   - JSON DSL is stored in `.cursorfi/pages.json` for fast loading and persistence
+   - Code files serve as the source of truth; JSON DSL is a working representation for visual editing
+   - Bidirectional sync maintains consistency between JSON DSL and code files
+   - JSON DSL enables fast visual editing, undo/redo, and canvas state management
+
 ### Code Generation Rules
 
 Following Principles 5 and 7:
@@ -302,11 +313,11 @@ Specific package versions and container images will be defined in the implementa
 - [ ] **Synchronization Accuracy**: 100% of code changes correctly sync to visual canvas within 500ms
 - [ ] **Code Preservation**: 100% of user code remains intact after all editor operations
 - [ ] **Framework Support**: System successfully works with Next.js, Vite, and Astro test projects
-- [ ] **Performance**: Editor responds to user actions within 100ms, file sync completes within 500ms
+- [ ] **Performance**: Editor responds to user actions within 100ms (p95), file sync completes within 500ms (p95), component scanning completes within 10 seconds (p95) for 100 components
 - [ ] **Component Library**: 40+ pre-built components available, all with dark mode and responsive design
 - [ ] **Test Coverage**: All user scenarios pass automated tests in containers
 - [ ] **Integration**: Cursor IDE integration works on both macOS and Windows
-- [ ] **Reliability**: System handles 100+ component projects without performance issues
+- [ ] **Reliability**: System handles 100+ component projects without performance issues (file watcher < 50ms p95, canvas 60fps, sync < 500ms p95)
 - [ ] **Documentation**: Complete setup and usage documentation with examples
 
 ## Assumptions

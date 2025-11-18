@@ -398,15 +398,15 @@ CursorFi is a visual site editor that runs in a web browser, providing a Figma/W
 - [ ] Configuration externalized (all values in .env or cursorfi.json)
 - [ ] No hardcoded values (ports, paths, etc.)
 - [ ] Compliance with all 10 principles verified
-- [ ] Visual-to-code sync works within 500ms
-- [ ] Code-to-visual sync works within 500ms
+- [ ] Visual-to-code sync works within 500ms (p95)
+- [ ] Code-to-visual sync works within 500ms (p95)
 - [ ] Code preservation verified (100% user code intact)
 - [ ] Framework support verified (Next.js, Vite, Astro)
 - [ ] Cursor IDE integration works (remote deployment)
 - [ ] 40+ pre-built components available
 - [ ] All user scenarios pass E2E tests
-- [ ] Performance targets met (100ms visual response, 500ms sync)
-- [ ] Handles 100+ component projects without degradation
+- [ ] Performance targets met (100ms p95 visual response, 500ms p95 sync, 10s p95 component scanning for 100 components)
+- [ ] Handles 100+ component projects without degradation (file watcher < 50ms p95, canvas 60fps, sync < 500ms p95)
 
 ## Gates
 
